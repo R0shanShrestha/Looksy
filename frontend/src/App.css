@@ -1,0 +1,7 @@
+.bg {
+  background: url("/bg.png") center center / cover;
+}
+
+.no-scroller::-webkit-scrollbar {
+  display: none;
+}
