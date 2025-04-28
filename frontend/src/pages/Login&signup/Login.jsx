@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { IoLockClosed, IoMail } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContextProvider } from "../../context/UserContext";
+import { GetToken } from "../../utils/LocalStorageHandler";
 
 const Login = () => {
+  const { login } = useContext(UserContextProvider);
+  const navTo = useNavigate();
+
+  useEffect(() => {
+    const token = GetToken("authToken");
+    if (token) {
+      navTo("/home");
+    }
+  }, []);
+  const email = useRef();
+  const password = useRef();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const data = {
+      email: email.current.value,
+      password: password.current.value,
+    };
+
+    login(data);
+  };
   return (
     <div className="flex flex-col space-y-10">
       <div className="justify-center flex flex-col items-center">
@@ -17,6 +40,7 @@ const Login = () => {
             <IoMail />
           </span>
           <input
+            ref={email}
             type="email"
             placeholder="Email"
             className=" w-full py-4 placeholder:text-zinc-500 outline-none"
@@ -27,6 +51,7 @@ const Login = () => {
             <IoLockClosed />
           </span>
           <input
+            ref={password}
             type="password"
             placeholder="Password"
             className=" w-full py-4 placeholder:text-zinc-500 outline-none"
@@ -37,7 +62,12 @@ const Login = () => {
         </div>
 
         <div className=" flex justify-center">
-          <button className="bg-blue-950 shadow-sm shadow-blue-400 focus:bg-blue-500  p-3 w-full rounded-xl text-xl font-bold">
+          <button
+            onClick={(e) => {
+              submitHandler(e);
+            }}
+            className="hover:bg-blue-950 shadow-sm shadow-blue-400 bg-blue-500  p-3 w-full rounded-xl text-xl font-bold"
+          >
             Log In
           </button>
         </div>
@@ -46,7 +76,9 @@ const Login = () => {
         <hr />
         <p>
           "Don't have an account?" ➔{" "}
-          <Link to={'/register'} className="font-black text-blue-400">Sign Up</Link>
+          <Link to={"/register"} className="font-black text-blue-400">
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>

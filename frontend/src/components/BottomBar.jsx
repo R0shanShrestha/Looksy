@@ -11,14 +11,14 @@ import { Link } from "react-router-dom";
 
 const BottomBar = () => {
   return (
-    <div className=" z-10 bg-black w-full p-4 text-white rounded flex justify-around items-center space-x-10 font-bold">
-      <Link className="text-2xl" to={"/search"}>
+    <div className=" sm:hidden z-10 bg-black w-full p-2 h-[80px] py-3 text-white rounded flex justify-around items-center space-x-10 font-bold">
+      <Link className="text-2xl" to={"/explore"}>
         <RiSearch2Line />
       </Link>
       <Link to={"/"} className="text-2xl">
         <RiHome2Line />
       </Link>
-      <Link className="text-2xl">
+      <Link to={"/profile"} className="text-2xl">
         <RiUser3Line />
       </Link>
     </div>
