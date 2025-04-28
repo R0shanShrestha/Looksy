@@ -1,5 +1,3 @@
-# Let's create the README.md file based on the user's request.
-
 # Looksy
 
 Looksy is a visually-driven web application that allows users to **discover**, **search**, **save**, and **manage** high-quality images. Powered by the Unsplash API, it provides an inspiring platform for creators to find visuals across various themes like anime, gaming, nature, and more.
