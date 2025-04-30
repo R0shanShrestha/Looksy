@@ -6,7 +6,7 @@ import ImageCard from "../../components/ImageCard";
 import { PhotoContextProvider } from "../../context/PhotoContext";
 const ExplorePc = () => {
   // States
-  const { searchImage, storage, isLoading, search, setSearch } =
+  const { searchImage, storage, isLoading, isError, search, setSearch } =
     useContext(PhotoContextProvider);
   const [pageNum, setPagenum] = useState(1);
   const [isFullScreen, setFullScreen] = useState(false);
@@ -56,9 +56,7 @@ const ExplorePc = () => {
   }, [isFullScreen]);
 
   return (
-    <div className=" w-[80vw]    p-3   gap-3 flex   lg:h-[80vh] xl:h-[70vh]">
-      {/* Full screen Display */}
-
+    <div className=" w-[50vw]  md:w-[80vw] p-3   gap-3 flex   lg:h-[80vh] xl:h-[70vh]">
       {/* search box  */}
       <div className="flex px-3  mx-auto  min-w-[300px] max-w-[400px]  flex-col  gap-2 py-2">
         <h1 className="text-2xl font-semibold">Explore. Find. Get Inspired.</h1>
@@ -117,8 +115,9 @@ const ExplorePc = () => {
               </div>
             )}
       </div>
-
-      {isLoading ? (
+      {isError.err ? (
+        <h1 className=" text-center  text-3xl font-semibold">{isError.msg}</h1>
+      ) : isLoading ? (
         <img
           ref={lodAnim}
           src="loading.png"
@@ -129,16 +128,18 @@ const ExplorePc = () => {
           Search What your want ?
         </h1>
       ) : (
-        <div className="outputs px-5 py-3    h-full  overflow-scroll sm:columns-1  no-scroller  overflow-y-scroll gap-0 xl:columns-4 w-fit  ">
+        <div className="outputs px-5 py-3    h-full  overflow-scroll sm:columns-1  no-scroller  overflow-y-scroll gap-0 xl:columns-4   ">
           {storage.results?.map(
             ({ id, alt_description, urls, likes, links }) => (
-              <ImageCard
-                image={urls.full}
-                title={alt_description}
-                key={id}
-                likeNum={likes}
-                download={links.download}
-              />
+              <div className="max-w-[200px] ">
+                <ImageCard
+                  image={urls.full}
+                  title={alt_description}
+                  key={id}
+                  likeNum={likes}
+                  download={links.download}
+                />
+              </div>
             )
           )}
         </div>

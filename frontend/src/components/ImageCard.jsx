@@ -41,7 +41,7 @@ const ImageCard = ({
         });
         setFullScreen(true);
       }}
-      className="card cursor-pointer  overflow-hidden w-full max-w-[250px] md:max-w-[300px]  duration-300  md:max-h-[300px] rounded-2xl sm:rounded-none h-fit flex flex-col justify-between"
+      className="card cursor-pointer  overflow-hidden w-full   duration-300   rounded-2xl sm:rounded-none h-fit flex flex-col justify-between"
     >
       <div className="cardImg  relative overflow-hidden h-fit">
         <Link

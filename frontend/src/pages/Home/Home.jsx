@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ImageCard from "../../components/ImageCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -17,8 +17,13 @@ const Home = () => {
   const { recentSearch, setSearch, search, searchImage } =
     useContext(PhotoContextProvider);
 
+  const [recImg, setRecImg] = useState(recentSearch);
+  useEffect(() => {
+    setRecImg(recentSearch);
+  }, [recentSearch]);
+
   return (
-    <div className="flex  flex-col h-fit w-full">
+    <div className="flex  flex-col  w-full ">
       <div className="heroSec flex h-fit flex-col justify-center items-center space-y-3 py-5 md:w-[50%] md:mx-auto">
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-3xl text-center font-semibold md:text-5xl md:font-bold">
@@ -87,38 +92,34 @@ const Home = () => {
             </h1>
           </div>
 
-          <div className=" w-full flex items-center justify-center">
-            <Swiper
-              loop={true}
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={3}
-              // slidesPerView={1}
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
-              }}
-              pagination={true}
-              modules={[EffectCoverflow, Pagination]}
-              className="mySwiper  flex w-full duration-200"
-            >
-              {recentSearch.map(
-                ({ id, alt_description, urls, likes, links }) => (
-                  <SwiperSlide className="flex justify-center items-center w-full   ">
-                    <ImageCard
-                      // likeNum={likes}
-                      image={urls.regular}
-                      // title={alt_description}
-                    />
-                  </SwiperSlide>
-                )
-              )}
-            </Swiper>
-          </div>
+          <Swiper
+            loop={true}
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={3}
+            // slidesPerView={1}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            pagination={true}
+            modules={[EffectCoverflow, Pagination]}
+            className="mySwiper  flex w-full duration-200"
+          >
+            {recImg.map(({ id, alt_description, urls, likes, links }) => (
+              <SwiperSlide className="flex justify-center items-center w-fit  max-h-[200px]   ">
+                <ImageCard
+                  // likeNum={likes}
+                  image={urls.regular}
+                  // title={alt_description}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
     </div>

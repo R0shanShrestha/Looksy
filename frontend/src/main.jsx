@@ -51,7 +51,11 @@ const routes = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <UserProfile />,
+        element: (
+          <UserAuthWrapper>
+            <UserProfile />
+          </UserAuthWrapper>
+        ),
       },
       {
         path: "/register",
