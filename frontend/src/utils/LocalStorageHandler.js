@@ -3,9 +3,8 @@ export const GetToken = (token) => {
 };
 export const RemoveToken = (token) => {
   localStorage.removeItem(token);
-  return true;
 };
 export const SetToken = (token, tokenValue) => {
+  console.log(tokenValue)
   localStorage.setItem(token, tokenValue);
-  return true;
 };

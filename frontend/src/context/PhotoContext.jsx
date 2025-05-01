@@ -1,10 +1,5 @@
 import axios from "axios";
-import React, {
-  createContext,
-  useReducer,
-  useState,
-  useTransition,
-} from "react";
+import React, { createContext, useReducer, useState } from "react";
 
 export const PhotoContextProvider = createContext({
   storage: [],
@@ -13,6 +8,8 @@ export const PhotoContextProvider = createContext({
   isLoading: false,
   isError: false,
   favImg: [],
+  isFullScreen: false,
+  setFullScreen: () => {},
   setSearch: () => {},
   searchImage: () => {},
   setIsLoading: () => {},
@@ -32,6 +29,7 @@ const PhotoReducer = (initial, action) => {
 const PhotoContext = ({ children }) => {
   const [storage, DispatchStorage] = useReducer(PhotoReducer, []);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFullScreen, setFullScreen] = useState(false);
   const [isError, setError] = useState({ err: false, msg: "" });
   const [recentSearch, setrecentSearch] = useState([]);
   const [search, setSearch] = useState("");
@@ -79,6 +77,8 @@ const PhotoContext = ({ children }) => {
         favImg,
         isError,
         setFavImg,
+        isFullScreen,
+        setFullScreen,
       }}
     >
       {children}

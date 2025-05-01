@@ -5,48 +5,17 @@ import { MdBookmarkAdd } from "react-icons/md";
 import { MdBookmarkAdded } from "react-icons/md";
 import { PhotoContextProvider } from "../context/PhotoContext";
 
-const ImageCard = ({
-  image,
-  title,
-  setFullImageUri,
-  setFullScreen,
-  likeNum,
-  download,
-}) => {
-  const { setFavImg, favImg } = useContext(PhotoContextProvider);
+const ImageCard = ({ image, title, setFullImageUri, likeNum, download }) => {
+  const { setFavImg, favImg, setFullScreen } = useContext(PhotoContextProvider);
   const [BookMark, setBookMark] = useState(false);
-  useEffect(() => {
-    if (BookMark) {
-      setFavImg((pre) => [
-        {
-          image,
-          title,
-          likeNum,
-        },
-        ...pre,
-      ]);
-    } else {
-      const replaceDt = favImg.filter((val) => val.image != image);
-      setFavImg(replaceDt);
-    }
-  }, [BookMark]);
 
   return (
-    <div
-      onClick={() => {
-        setFullImageUri({
-          uri: image,
-          title: title,
-          likes: likeNum,
-        });
-        setFullScreen(true);
-      }}
-      className="card cursor-pointer  overflow-hidden w-full   duration-300   rounded-2xl sm:rounded-none h-fit flex flex-col justify-between"
-    >
+    <div className="card  cursor-pointer z-10  overflow-hidden w-full   duration-300   rounded-2xl sm:rounded-none h-fit flex flex-col justify-between">
       <div className="cardImg  relative overflow-hidden h-fit">
         <Link
           onClick={() => {
-            setBookMark((pre) => !pre);
+            setBookMark(true);
+            setFavImg((prev) => [...prev, { img: image }]);
           }}
           className={`${
             BookMark
@@ -60,6 +29,14 @@ const ImageCard = ({
           src={image}
           alt="not found"
           className=" w-full h-full object-cover md:object-contain object-top "
+          onClick={() => {
+            setFullImageUri({
+              uri: image,
+              title: title,
+              likes: likeNum,
+            });
+            setFullScreen(true);
+          }}
         />
       </div>
       {title && (

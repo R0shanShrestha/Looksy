@@ -7,16 +7,21 @@ import { PhotoContextProvider } from "../../context/PhotoContext";
 import FullScreen from "../../components/FullScreen";
 const Explore = () => {
   // States
-  const { searchImage, storage, isLoading, search, isError, setSearch } =
-    useContext(PhotoContextProvider);
+  const {
+    searchImage,
+    storage,
+    isLoading,
+    search,
+    isError,
+    isFullScreen,
+    setSearch,
+  } = useContext(PhotoContextProvider);
   const [pageNum, setPagenum] = useState(1);
-  const [isFullScreen, setFullScreen] = useState(false);
   const [fullImageUri, setFullImageUri] = useState({
     url: "",
     title: "",
     likes: 0,
   });
-
   const searchHandler = () => {
     if (search == "") {
       alert("Field is Empty");
@@ -27,6 +32,7 @@ const Explore = () => {
 
   // ref
   const lodAnim = useRef();
+  const fullScr = useRef();
 
   useGSAP(() => {
     if (isLoading) {
@@ -38,33 +44,31 @@ const Explore = () => {
       });
     }
   }, [isLoading]);
+
   useGSAP(() => {
     if (isFullScreen) {
-      gsap.to(".fullscreenAnimate", {
-        transform: "translateY(0)",
-        delay: 0.5,
-        duration: 1,
-        ease: "power1.out",
+      gsap.to(fullScr.current, {
+        transform: "translate(0px, 0px)",
+        duration: 0.5,
       });
     } else {
-      gsap.to(".fullscreenAnimate", {
-        transform: "translateY(200%)",
-        delay: 0.5,
-        duration: 1,
-        ease: "power1.in",
+      gsap.to(fullScr.current, {
+        transform: "translate(0, 100%)",
+        duration: 0.5,
       });
     }
   }, [isFullScreen]);
 
   return (
     <div className=" w-full sm:w-[50vw] md:w-[80vw] p-3 xl:hidden   gap-3 flex flex-row  h-[70vh]">
-      {/* Full screen Display */}
+      {/* halfScreen when img selected */}
+      <div
+        ref={fullScr}
+        className="fixed z-40 translate-y-[100%]   cursor-pointer pb-10  pt-10 bg-black  max-h-[90%] bottom-0 px-5 right-0 rounded-s-2xl sm:w-[300px] md:w-[500px] shadow-xl shadow-slate-800"
+      >
+        <FullScreen data={fullImageUri} />
+      </div>
 
-      <FullScreen
-        imgDetails={fullImageUri}
-        setFullScreen={setFullScreen}
-        isFullScreen={isFullScreen}
-      />
       {/* search box  */}
       <div className="flex px-3 w-[30%] mx-auto    flex-col  gap-2 py-2">
         <h1 className="text-2xl font-semibold">Explore. Find. Get Inspired.</h1>
@@ -133,7 +137,7 @@ const Explore = () => {
         <img
           ref={lodAnim}
           src="loading.png"
-          className="w-[50px]  mx-auto mt-10 mb-10 "
+          className="w-[50px] h-[50px] mx-auto mt-10 mb-10 "
         />
       ) : storage == "" ? (
         <h1 className=" text-center  text-3xl font-semibold">
@@ -143,8 +147,13 @@ const Explore = () => {
         <div className="outputs px-5 py-3 flex-col flex-wrap no-scroller h-full w-[70%]  gap-1 overflow-hidden block md:flex  overflow-x-scroll overflow-y-scroll  ">
           {storage.results?.map(
             ({ id, alt_description, urls, likes, links }) => (
-              <div className="max-w-[200px] ">
+              <div
+                key={id}
+                className="max-w-[200px]"
+               
+              >
                 <ImageCard
+                  setFullImageUri={setFullImageUri}
                   image={urls.full}
                   title={alt_description}
                   key={id}

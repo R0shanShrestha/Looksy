@@ -14,11 +14,12 @@ import ImageCard from "../../components/ImageCard";
 import { IoLogOut } from "react-icons/io5";
 import { PhotoContextProvider } from "../../context/PhotoContext";
 import { UserContextProvider } from "../../context/UserContext";
+import { GetToken } from "../../utils/LocalStorageHandler";
 //
 
 const UserProfile = () => {
   const { favImg, setFavImg } = useContext(PhotoContextProvider);
-  const { user } = useContext(UserContextProvider);
+  const user = JSON.parse(GetToken("user"));
 
   return (
     <div className="w-full md:w-[80vw] px-10 md:flex-col  no-scroller flex   ">
@@ -50,19 +51,47 @@ const UserProfile = () => {
         </div>
       </div>
       {/* Save your visuals */}
-      <div className="border hidden">
+      <div className=" w-full p-5">
         <div>
           <h1 className="text-xl font-semibold">Favourite Images</h1>
         </div>
-        <div className="Favimages flex gap-2 px-3">
-          {favImg.map(({ image, title }) => {
-            return (
-              <div className="max-w-[150px] max-h-[200px] overflow-hidden">
-                <ImageCard image={image} />
-              </div>
-            );
-          })}
-        </div>
+        {favImg ? (
+          <div className="Favimages flex gap-2 px-3 mt-5">
+            <Swiper
+              loop={true}
+              effect={"coverflow"}
+              grabCursor={true}
+              centeredSlides={true}
+              slidesPerView={3}
+              // slidesPerView={1}
+              coverflowEffect={{
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: true,
+              }}
+              pagination={true}
+              modules={[EffectCoverflow, Pagination]}
+              className="mySwiper  flex w-full duration-200"
+            >
+              {favImg.map(({ img }, idx) => (
+                <SwiperSlide
+                  className="flex justify-center items-center w-fit  max-h-[200px]   "
+                  key={idx}
+                >
+                  <ImageCard
+                    // likeNum={likes}
+                    image={img}
+                    // title={alt_description}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        ) : (
+          <div>No</div>
+        )}
       </div>
     </div>
   );

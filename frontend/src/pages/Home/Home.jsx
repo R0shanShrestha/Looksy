@@ -23,10 +23,10 @@ const Home = () => {
   }, [recentSearch]);
 
   return (
-    <div className="flex  flex-col  w-full ">
+    <div className="flex  w-[80vw]  flex-col  h-[70vh] ">
       <div className="heroSec flex h-fit flex-col justify-center items-center space-y-3 py-5 md:w-[50%] md:mx-auto">
         <div className="flex flex-col items-center gap-4">
-          <h1 className="text-3xl text-center font-semibold md:text-5xl md:font-bold">
+          <h1 className="text-3xl  text-center font-bold md:text-5xl md:font-bold">
             <span className="md:hidden">Search. </span>Find. Inspire - with
             Looksy.
           </h1>
@@ -36,13 +36,13 @@ const Home = () => {
           </p>
         </div>
         <div className="w-full px-10 md:mx-auto md:flex flex-col items-center">
-          <div className="flex space-x-2 w-full md:w-[70%]">
+          <div className="flex space-x-2   sm:w-full">
             <input
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
               type="text"
-              className="border py-3  px-2 outline-none text-sm rounded-md w-full bg-white text-slate-900 placeholder:text-slate-600"
+              className=" py-3 min-w-[200px]   px-2 outline-none text-sm rounded-md w-full bg-white text-slate-900 placeholder:text-slate-600"
               placeholder="Search images..."
             />
             <Link
@@ -56,29 +56,38 @@ const Home = () => {
             </Link>
           </div>
           <div className="flex mt-2 space-x-4 w-full  justify-center py-2">
-            <span
-              onClick={() => {
-                setSearch("Robot");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Robot</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage('Robot', 1);
+                  setSearch("robot")
+                }}
+                to={"/explore"}
+              >
+                Robot
+              </Link>
             </span>
-            <span
-              onClick={() => {
-                setSearch("Anime");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Anime</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage('Anime', 1);
+                  setSearch('anime')
+                }}
+                to={"/explore"}
+              >
+                Anime
+              </Link>
             </span>
-            <span
-              onClick={() => {
-                setSearch("Nature");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Nature</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage("nature", 1);
+                  setSearch('nature')
+                }}
+                to={"/explore"}
+              >
+                Nature
+              </Link>
             </span>
           </div>
         </div>
