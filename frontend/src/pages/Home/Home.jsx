@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ImageCard from "../../components/ImageCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -17,11 +17,16 @@ const Home = () => {
   const { recentSearch, setSearch, search, searchImage } =
     useContext(PhotoContextProvider);
 
+  const [recImg, setRecImg] = useState(recentSearch);
+  useEffect(() => {
+    setRecImg(recentSearch);
+  }, [recentSearch]);
+
   return (
-    <div className="flex  flex-col h-fit w-full">
+    <div className="flex  w-[80vw]  flex-col  h-[70vh] ">
       <div className="heroSec flex h-fit flex-col justify-center items-center space-y-3 py-5 md:w-[50%] md:mx-auto">
         <div className="flex flex-col items-center gap-4">
-          <h1 className="text-3xl text-center font-semibold md:text-5xl md:font-bold">
+          <h1 className="text-3xl  text-center font-bold md:text-5xl md:font-bold">
             <span className="md:hidden">Search. </span>Find. Inspire - with
             Looksy.
           </h1>
@@ -31,13 +36,13 @@ const Home = () => {
           </p>
         </div>
         <div className="w-full px-10 md:mx-auto md:flex flex-col items-center">
-          <div className="flex space-x-2 w-full md:w-[70%]">
+          <div className="flex space-x-2   sm:w-full">
             <input
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
               type="text"
-              className="border py-3  px-2 outline-none text-sm rounded-md w-full bg-white text-slate-900 placeholder:text-slate-600"
+              className=" py-3 min-w-[200px]   px-2 outline-none text-sm rounded-md w-full bg-white text-slate-900 placeholder:text-slate-600"
               placeholder="Search images..."
             />
             <Link
@@ -51,29 +56,38 @@ const Home = () => {
             </Link>
           </div>
           <div className="flex mt-2 space-x-4 w-full  justify-center py-2">
-            <span
-              onClick={() => {
-                setSearch("Robot");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Robot</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage('Robot', 1);
+                  setSearch("robot")
+                }}
+                to={"/explore"}
+              >
+                Robot
+              </Link>
             </span>
-            <span
-              onClick={() => {
-                setSearch("Anime");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Anime</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage('Anime', 1);
+                  setSearch('anime')
+                }}
+                to={"/explore"}
+              >
+                Anime
+              </Link>
             </span>
-            <span
-              onClick={() => {
-                setSearch("Nature");
-              }}
-              className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 "
-            >
-              <Link to={"/explore"}>Nature</Link>
+            <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
+              <Link
+                onClick={() => {
+                  searchImage("nature", 1);
+                  setSearch('nature')
+                }}
+                to={"/explore"}
+              >
+                Nature
+              </Link>
             </span>
           </div>
         </div>
@@ -87,38 +101,34 @@ const Home = () => {
             </h1>
           </div>
 
-          <div className=" w-full flex items-center justify-center">
-            <Swiper
-              loop={true}
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={3}
-              // slidesPerView={1}
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
-              }}
-              pagination={true}
-              modules={[EffectCoverflow, Pagination]}
-              className="mySwiper  flex w-full duration-200"
-            >
-              {recentSearch.map(
-                ({ id, alt_description, urls, likes, links }) => (
-                  <SwiperSlide className="flex justify-center items-center w-full   ">
-                    <ImageCard
-                      // likeNum={likes}
-                      image={urls.regular}
-                      // title={alt_description}
-                    />
-                  </SwiperSlide>
-                )
-              )}
-            </Swiper>
-          </div>
+          <Swiper
+            loop={true}
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={3}
+            // slidesPerView={1}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            pagination={true}
+            modules={[EffectCoverflow, Pagination]}
+            className="mySwiper  flex w-full duration-200"
+          >
+            {recImg.map(({ id, alt_description, urls, likes, links }) => (
+              <SwiperSlide className="flex justify-center items-center w-fit  max-h-[200px]   ">
+                <ImageCard
+                  // likeNum={likes}
+                  image={urls.regular}
+                  // title={alt_description}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
     </div>

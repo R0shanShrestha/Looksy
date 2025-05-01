@@ -16,7 +16,6 @@ const UserContext = ({ children }) => {
   const [isLoading, setLoading] = useState(false);
 
   const register = async (data) => {
-    console.log(12);
     try {
       setError(false);
       setLoading(true);
@@ -25,7 +24,6 @@ const UserContext = ({ children }) => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      console.log(res);
       const user = res.data;
       setLoading(false);
       SetToken("authToken", user.authtoken);
@@ -61,10 +59,11 @@ const UserContext = ({ children }) => {
       });
       const user = res.data;
       setLoading(false);
-      SetToken("authToken", user.authtoken);
-      setUser(user.user);
+      SetToken("authToken", user.authToken);
+      SetToken("user", JSON.stringify(user.user));
       alert("User Logged In");
     } catch (error) {
+    console.log(2)
       alert(
         error.response.data.msg == undefined
           ? "Fields Required"

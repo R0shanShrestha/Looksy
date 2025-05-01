@@ -1,17 +1,15 @@
 import axios from "axios";
-import React, {
-  createContext,
-  useReducer,
-  useState,
-  useTransition,
-} from "react";
+import React, { createContext, useReducer, useState } from "react";
 
 export const PhotoContextProvider = createContext({
   storage: [],
   recentSearch: [],
   search: "",
   isLoading: false,
+  isError: false,
   favImg: [],
+  isFullScreen: false,
+  setFullScreen: () => {},
   setSearch: () => {},
   searchImage: () => {},
   setIsLoading: () => {},
@@ -31,6 +29,8 @@ const PhotoReducer = (initial, action) => {
 const PhotoContext = ({ children }) => {
   const [storage, DispatchStorage] = useReducer(PhotoReducer, []);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFullScreen, setFullScreen] = useState(false);
+  const [isError, setError] = useState({ err: false, msg: "" });
   const [recentSearch, setrecentSearch] = useState([]);
   const [search, setSearch] = useState("");
   const [favImg, setFavImg] = useState([]);
@@ -40,19 +40,29 @@ const PhotoContext = ({ children }) => {
       import.meta.env.VITE_ACCESS_KEY
     }`;
 
-    setIsLoading(true);
-    const res = await axios.get(uri);
-    setrecentSearch(res.data.results);
-    setIsLoading(false);
+    try {
+      setError({ err: false, msg: "" });
+      setIsLoading(true);
 
-    DispatchStorage({
-      type: "search",
-      payload: {
-        total: res.data.total,
-        total_pages: res.data.total_pages,
-        results: res.data.results,
-      },
-    });
+      const res = await axios.get(uri);
+      setrecentSearch(res.data.results);
+      setIsLoading(false);
+
+      DispatchStorage({
+        type: "search",
+        payload: {
+          total: res.data.total,
+          total_pages: res.data.total_pages,
+          results: res.data.results,
+        },
+      });
+    } catch (error) {
+      // console.log(error.message);
+      if (error.message == "Network Error") {
+        setError({ err: true, msg: "No Internet Connection !" });
+      }
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -65,7 +75,10 @@ const PhotoContext = ({ children }) => {
         search,
         setSearch,
         favImg,
+        isError,
         setFavImg,
+        isFullScreen,
+        setFullScreen,
       }}
     >
       {children}
