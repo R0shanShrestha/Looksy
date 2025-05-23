@@ -18,18 +18,18 @@ Looksy is a visually-driven web application that allows users to **discover**, *
 ## 📷 Screenshots
 
 ### Home Page
-![Home Page]
-![1](https://github.com/user-attachments/assets/1fafdef8-d433-405e-9297-0edc78d1b568)
+![Screenshot 2025-05-23 110422](https://github.com/user-attachments/assets/39443df9-3f88-441c-a343-1f42a6f74d03)
+
 
 
 ### Explore/Search Page
-![Explore Page]
-![2](https://github.com/user-attachments/assets/5333c997-e68c-4bc8-b038-4bb9b19a5ff5)
+![Screenshot 2025-05-23 110409](https://github.com/user-attachments/assets/70c06c94-a789-4ab4-895c-18668aea1fd8)
+
 
 
 ### User Account Page
-![Account Page]
-![4](https://github.com/user-attachments/assets/01b07054-c287-4c4e-9202-0b23b39586d3)
+![Screenshot 2025-05-23 110512](https://github.com/user-attachments/assets/f5c6c8c6-cd97-4319-bec2-c5f5b4236400)
+
 
 
 ### User Login Page
