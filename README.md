@@ -59,6 +59,9 @@ Looksy is a visually-driven web application that allows users to **discover**, *
 - npm run server
 ## 4. Deploy the application
 - npm run dev
+## 5. Login with default credientials
+- email: looksy@gmail.com
+- password: looksy123
   
 ## 🛠️ Tech Stack
 
