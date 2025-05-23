@@ -1,11 +1,13 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { SetToken } from "../utils/LocalStorageHandler";
+import { GetToken, SetToken } from "../utils/LocalStorageHandler";
 export const UserContextProvider = createContext({
   register: () => {},
   login: () => {},
   user: [],
   isLoading: false,
+  logged: false,
+  setLogged: () => {},
   setUser: () => {},
 });
 
@@ -14,6 +16,7 @@ const UserContext = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [logged, setLogged] = useState(false);
 
   const register = async (data) => {
     try {
@@ -27,14 +30,21 @@ const UserContext = ({ children }) => {
       const user = res.data;
       setLoading(false);
       SetToken("authToken", user.authtoken);
-      setUser(user.user);
+      SetToken("user", JSON.stringify(user.user));
+
+      setLogged(true);
       alert("Sign up successfully");
     } catch (error) {
-      console.log(error);
       if (error.data != "") {
-        error.response.data.error.map((err) => {
-          alert(err.msg);
-        });
+        // console.log(error);
+        if (error.response.data.error) {
+          error.response.data.error.map((err) => {
+            alert(err.msg);
+          });
+        }
+        else{
+          alert(error.response.data.msg)
+        }
       } else {
         alert(
           error.response.data.msg == undefined
@@ -61,9 +71,10 @@ const UserContext = ({ children }) => {
       setLoading(false);
       SetToken("authToken", user.authToken);
       SetToken("user", JSON.stringify(user.user));
+      setLogged(true);
+
       alert("User Logged In");
     } catch (error) {
-    console.log(2)
       alert(
         error.response.data.msg == undefined
           ? "Fields Required"
@@ -86,6 +97,8 @@ const UserContext = ({ children }) => {
       setLoading(false);
       SetToken("authToken", user.authToken);
       setUser(user.user);
+      setLogged(true);
+
       alert("User Logged In");
     } catch (error) {
       alert(
@@ -100,7 +113,7 @@ const UserContext = ({ children }) => {
 
   return (
     <UserContextProvider.Provider
-      value={{ register, login, user, setUser, isLoading }}
+      value={{ register, login, user, setUser, isLoading, logged, setLogged }}
     >
       {children}
     </UserContextProvider.Provider>

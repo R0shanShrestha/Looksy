@@ -1,97 +1,91 @@
-import React, { useContext } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-// import required modules
-import { EffectCoverflow, Pagination } from "swiper/modules";
-// import data from "../../../Data.json";
-import { Link } from "react-router-dom";
-import ImageCard from "../../components/ImageCard";
-import { IoLogOut } from "react-icons/io5";
-import { PhotoContextProvider } from "../../context/PhotoContext";
+import { FaEdit } from "react-icons/fa";
+import UserCard from "../../components/UserCard";
+import { FcAbout } from "react-icons/fc";
+import About from "./About";
+import { useContext, useEffect, useState } from "react";
+import SavedImage from "./SavedImage";
 import { UserContextProvider } from "../../context/UserContext";
-import { GetToken } from "../../utils/LocalStorageHandler";
-//
+import { Link } from "react-router-dom";
 
 const UserProfile = () => {
-  const { favImg, setFavImg } = useContext(PhotoContextProvider);
-  const user = JSON.parse(GetToken("user"));
+  const [tab, setTab] = useState("savedImage");
+  const { user } = useContext(UserContextProvider);
 
   return (
-    <div className="w-full md:w-[80vw] px-10 md:flex-col  no-scroller flex   ">
-      <div className="userInfo  flex flex-col gap-1 p-3">
-        <div className="userimg relative  w-fit">
-          <Link
-            to={"/logout"}
-            className=" absolute bg-slate-950 rounded-md -right-4 text-3xl"
-          >
-            <IoLogOut />
-          </Link>
+    <div className="w-[80%] mx-auto   p-3 h-[80vh] mt-10 flex  flex-col gap-3">
+      <div className="p-4  rounded-2xl bg-zinc-950">
+        {/* UserInfo */}
+        <div className="flex items-center  overflow-hidden rounded-xl gap-5">
           <img
-            src="/test.avif"
-            alt="not found"
-            className="w-[200px] h-[200px] object-cover object-top rounded-xl"
+            src="https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://img5.thuthuatphanmem.vn/uploads/2021/11/12/hinh-anh-anime-don-gian-hinh-nen-anime-don-gian-ma-dep_092443354.png"
+            alt="no found"
+            className="h-[150px] w-[150px] object-cover  rounded-full"
           />
-        </div>
-        <div className="desc">
-          <h3 className="text-xl font-bold">{user?.username}</h3>
-          <p className="text-slate-300 font-medium">Email: {user?.email}</p>
-          <div className="flex gap-2 mt-2">
-            <button className="bg-blue-500 flex justify-center items-center gap-3 text-sm  px-10 duration-300 rounded-2xl font-bold hover:bg-blue-400 cursor-pointer py-3">
-              Edit <FaEdit />
-            </button>
-            <button className="bg-red-500 flex items-center justify-center gap-3 px-5 text-sm duration-300 rounded-2xl font-bold hover:bg-red-400 cursor-pointer py-3">
-              <FaTrash /> Delete Account
-            </button>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-semibold">{user?.username}</h1>
+            {/* <h3 className="text-sm text-slate-100">beast009</h3> */}
+            <div className="flex gap-3 mt-3">
+              <button className="bg-blue-600 hover:bg-blue-500 text-white py-2 flex px-4 rounded items-center gap-3 font-semibold">
+                Edit <FaEdit />
+              </button>
+
+              <Link
+                to={"/logout"}
+                className=" text-white py-2 flex px-4 rounded items-center gap-3 hover:bg-white hover:text-slate-900 font-semibold"
+              >
+                Log Out
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-      {/* Save your visuals */}
-      <div className=" w-full p-5">
-        <div>
-          <h1 className="text-xl font-semibold">Favourite Images</h1>
-        </div>
-        {favImg ? (
-          <div className="Favimages flex gap-2 px-3 mt-5">
-            <Swiper
-              loop={true}
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={3}
-              // slidesPerView={1}
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
+      <div className=" rounded-xl overflow-hidden  h-fit  gap-3 grid  ">
+        {/* saveimage  */}
+        <div className="w-full  bg-zinc-950 h-full rounded-xl  px-3 py-2">
+          {/* tabs */}
+          <div className="p-3 flex gap-5 cursor-pointer">
+            {/* <span
+              className="hover:font-semibold duration-300"
+              onClick={() => {
+                setTab("about");
               }}
-              pagination={true}
-              modules={[EffectCoverflow, Pagination]}
-              className="mySwiper  flex w-full duration-200"
             >
-              {favImg.map(({ img }, idx) => (
-                <SwiperSlide
-                  className="flex justify-center items-center w-fit  max-h-[200px]   "
-                  key={idx}
-                >
-                  <ImageCard
-                    // likeNum={likes}
-                    image={img}
-                    // title={alt_description}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+              About
+            </span>
+            <span>|</span> */}
+            <span
+              className="font-semibold duration-300"
+              onClick={() => {
+                setTab("savedImage");
+              }}
+            >
+              Saved Images
+            </span>
           </div>
-        ) : (
-          <div>No</div>
-        )}
+          <hr />
+          {/* display selected tabs */}
+          <div className="flex max-h-[250px]   mt-3">
+            {/* {tab == "about" && <About />}{" "} */}
+            {tab == "savedImage" && <SavedImage />}
+          </div>
+        </div>
+        {/* Followed Profiles */}
+        <div className=" bg-zinc-950 h-fit rounded-xl p-3 flex flex-col gap-3">
+          <div className=" space-y-4 ">
+            <h1 className="">Followed Profiles</h1>
+            <hr />
+          </div>
+          <div className="h-full  p-2 w-full flex gap-5 cursor-pointer">
+            <h1>No Followers</h1>
+            {/* <UserCard
+              data={{
+                fullname: "Roshan Shrestha",
+                active: "3 min ago",
+                img: "https://i.pinimg.com/736x/93/f6/dd/93f6dd8cf10495b6c4ddd30f89c1830c.jpg",
+              }}
+            /> */}
+          </div>
+        </div>
       </div>
     </div>
   );

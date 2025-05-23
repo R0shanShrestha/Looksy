@@ -3,6 +3,7 @@ const {
   loginController,
   signupContoller,
   profileController,
+  favImage,
 } = require("../controller/ContollerProvider");
 const { body } = require("express-validator");
 const { userAuth } = require("../middleware/middlewareProviders");
@@ -28,5 +29,6 @@ UserRoute.post(
 );
 
 UserRoute.get("/profile/:userId", userAuth, profileController);
+UserRoute.put("/fav", userAuth, favImage);
 
 module.exports = UserRoute;

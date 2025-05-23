@@ -11,11 +11,14 @@ import { EffectCoverflow, Pagination } from "swiper/modules";
 // import data from "../../../Data.json";
 import { PhotoContextProvider } from "../../context/PhotoContext";
 import { Link } from "react-router-dom";
+import RecentImageCard from "../../components/RecentImageCard";
+import { UserContextProvider } from "../../context/UserContext";
 //
 
 const Home = () => {
   const { recentSearch, setSearch, search, searchImage } =
     useContext(PhotoContextProvider);
+  const { logged } = useContext(UserContextProvider);
 
   const [recImg, setRecImg] = useState(recentSearch);
   useEffect(() => {
@@ -23,7 +26,7 @@ const Home = () => {
   }, [recentSearch]);
 
   return (
-    <div className="flex  w-[80vw]  flex-col  h-[70vh] ">
+    <div className="flex  w-[80vw]  flex-col  h-[70vh]  mx-auto mt-10 ">
       <div className="heroSec flex h-fit flex-col justify-center items-center space-y-3 py-5 md:w-[50%] md:mx-auto">
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-3xl  text-center font-bold md:text-5xl md:font-bold">
@@ -59,8 +62,8 @@ const Home = () => {
             <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
               <Link
                 onClick={() => {
-                  searchImage('Robot', 1);
-                  setSearch("robot")
+                  logged && searchImage("Robot", 1);
+                  setSearch("robot");
                 }}
                 to={"/explore"}
               >
@@ -70,8 +73,8 @@ const Home = () => {
             <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
               <Link
                 onClick={() => {
-                  searchImage('Anime', 1);
-                  setSearch('anime')
+                  logged && searchImage("Anime", 1);
+                  setSearch("anime");
                 }}
                 to={"/explore"}
               >
@@ -81,8 +84,7 @@ const Home = () => {
             <span className="bg-slate-800 p-1 text-sm rounded cursor-pointer hover:shadow-sm shadow shadow-slate-400 duration-200 ">
               <Link
                 onClick={() => {
-                  searchImage("nature", 1);
-                  setSearch('nature')
+                  logged;
                 }}
                 to={"/explore"}
               >
@@ -119,11 +121,11 @@ const Home = () => {
             modules={[EffectCoverflow, Pagination]}
             className="mySwiper  flex w-full duration-200"
           >
-            {recImg.map(({ id, alt_description, urls, likes, links }) => (
+            {recImg.map((data) => (
               <SwiperSlide className="flex justify-center items-center w-fit  max-h-[200px]   ">
-                <ImageCard
+                <RecentImageCard
                   // likeNum={likes}
-                  image={urls.regular}
+                  data={data}
                   // title={alt_description}
                 />
               </SwiperSlide>

@@ -5,7 +5,7 @@ import { UserContextProvider } from "../../context/UserContext";
 import { GetToken } from "../../utils/LocalStorageHandler";
 
 const Login = () => {
-  const { login } = useContext(UserContextProvider);
+  const { login, logged } = useContext(UserContextProvider);
   const navTo = useNavigate();
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const Login = () => {
     if (token) {
       navTo("/home");
     }
-  }, []);
+  }, [logged]);
   const email = useRef();
   const password = useRef();
 
@@ -27,14 +27,14 @@ const Login = () => {
     login(data);
   };
   return (
-    <div className="flex flex-col space-y-10">
+    <div className="flex flex-col space-y-10  w-[80vw] mx-auto mt-10">
       <div className="justify-center flex flex-col items-center">
         <h1 className="text-3xl font-semibold">Welcome Back to Looksy!</h1>
         <p className="text-sm font-light text-slate-300">
           Log in to discover amazing images.
         </p>
       </div>
-      <form className="w-[80%] mx-auto px-1 flex flex-col space-y-2 py-2 gap-1">
+      <form className="w-[400px] mx-auto px-1  flex flex-col space-y-2 py-2 gap-1">
         <div className=" flex space-x-2  items-center border px-2 rounded-xl bg-white text-zinc-900 ">
           <span className="text-3xl">
             <IoMail />
@@ -71,16 +71,16 @@ const Login = () => {
             Log In
           </button>
         </div>
+        <div className="  text-center flex flex-col gap-5 w-[400px] mt-5 mx-auto">
+          <hr />
+          <p>
+            "Don't have an account?" ➔{" "}
+            <Link to={"/register"} className="font-black text-blue-400">
+              Sign Up
+            </Link>
+          </p>
+        </div>
       </form>
-      <div className="  text-center flex flex-col gap-5 w-[80%] mx-auto">
-        <hr />
-        <p>
-          "Don't have an account?" ➔{" "}
-          <Link to={"/register"} className="font-black text-blue-400">
-            Sign Up
-          </Link>
-        </p>
-      </div>
     </div>
   );
 };
