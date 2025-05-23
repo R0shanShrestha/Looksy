@@ -6,10 +6,10 @@ export const PhotoContextProvider = createContext({
   recentSearch: [],
   search: "",
   isLoading: false,
-  isError: false,
+  serverMsg: {},
   favImg: [],
-  isFullScreen: false,
-  setFullScreen: () => {},
+  SetServerMsg: () => {},
+  setStorage: () => {},
   setSearch: () => {},
   searchImage: () => {},
   setIsLoading: () => {},
@@ -19,47 +19,56 @@ export const PhotoContextProvider = createContext({
 const PhotoReducer = (initial, action) => {
   let newArr = initial;
   if (action.type == "search") {
-    // console.log(action.payload);
     newArr = action.payload;
-    // console.log(newArr);
   }
   return newArr;
 };
 
 const PhotoContext = ({ children }) => {
-  const [storage, DispatchStorage] = useReducer(PhotoReducer, []);
+  const [storage, setStorage] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullScreen, setFullScreen] = useState(false);
-  const [isError, setError] = useState({ err: false, msg: "" });
+  const [serverMsg, SetServerMsg] = useState({ state: false, msg: "" });
   const [recentSearch, setrecentSearch] = useState([]);
   const [search, setSearch] = useState("");
   const [favImg, setFavImg] = useState([]);
 
-  async function searchImage(query = "anime", page = 1, per_page) {
+  async function searchImage(query = "anime", page = 1) {
     const uri = `https://api.unsplash.com/search/photos?page=${page}&query=${query}&client_id=${
       import.meta.env.VITE_ACCESS_KEY
     }`;
 
     try {
-      setError({ err: false, msg: "" });
+      // Set server msg
+      SetServerMsg({ state: false, msg: "" });
+
       setIsLoading(true);
-
+      // fetching the data
       const res = await axios.get(uri);
-      setrecentSearch(res.data.results);
-      setIsLoading(false);
-
-      DispatchStorage({
-        type: "search",
-        payload: {
+      // console.log(res.data.results);
+      setTimeout(() => {
+        setIsLoading(false);
+        setrecentSearch(res.data.results);
+        setStorage({
           total: res.data.total,
           total_pages: res.data.total_pages,
           results: res.data.results,
-        },
-      });
+        });
+        // setIsLoading(false);
+      }, 5000);
     } catch (error) {
-      // console.log(error.message);
       if (error.message == "Network Error") {
-        setError({ err: true, msg: "No Internet Connection !" });
+        SetServerMsg({
+          type: "network",
+          msg: "No Internet Connection !",
+          state: true,
+        });
+
+        // Emptying storage
+        DispatchStorage({
+          type: "search",
+          payload: {},
+        });
       }
       setIsLoading(false);
     }
@@ -71,11 +80,13 @@ const PhotoContext = ({ children }) => {
         searchImage,
         storage,
         recentSearch,
+        setStorage,
         isLoading,
         search,
         setSearch,
         favImg,
-        isError,
+        serverMsg,
+        SetServerMsg,
         setFavImg,
         isFullScreen,
         setFullScreen,

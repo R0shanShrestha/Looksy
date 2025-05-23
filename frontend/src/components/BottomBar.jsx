@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 const BottomBar = () => {
   return (
-    <div className=" sm:hidden z-10 bg-black w-full p-2 h-[80px] py-3 text-white rounded flex justify-around items-center space-x-10 font-bold">
+    <div className=" sm:hidden absolute bottom-0 z-10 bg-black w-full p-2 h-[80px] py-3 text-white rounded flex justify-around items-center space-x-10 font-bold">
       <Link className="text-2xl" to={"/explore"}>
         <RiSearch2Line />
       </Link>

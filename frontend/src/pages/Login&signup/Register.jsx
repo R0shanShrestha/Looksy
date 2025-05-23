@@ -6,7 +6,7 @@ import { UserContextProvider } from "../../context/UserContext";
 import { GetToken } from "../../utils/LocalStorageHandler";
 
 const Register = () => {
-  const { register, isLoading } = useContext(UserContextProvider);
+  const { register, isLoading, logged } = useContext(UserContextProvider);
   const navTo = useNavigate();
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const Register = () => {
     if (token) {
       navTo("/home");
     }
-  }, []);
+  }, [logged]);
   const username = useRef();
   const email = useRef();
   const password = useRef();
@@ -31,7 +31,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-10">
+    <div className="flex flex-col space-y-10 w-[80vw] mx-auto mt-10">
       <div className="justify-center flex flex-col items-center">
         <h1 className="text-3xl font-semibold">Create Your Looksy Account</h1>
         <p className="text-sm font-light text-slate-300">
@@ -40,7 +40,7 @@ const Register = () => {
       </div>
       <form
         method="POST"
-        className="w-[80%] mx-auto px-1 flex flex-col space-y-2 py-2 gap-1"
+        className="w-[400px] mx-auto px-1 flex flex-col space-y-2 py-2 gap-1"
       >
         <div className=" flex space-x-2  items-center border px-2 rounded-xl bg-white text-zinc-900 ">
           <span className="text-3xl">
@@ -104,7 +104,7 @@ const Register = () => {
           )}
         </div>
       </form>
-      <div className="  text-center flex flex-col gap-5 w-[80%] mx-auto">
+      <div className="  text-center flex flex-col gap-5 w-[400px] mx-auto">
         <hr />
         <p>
           Already have an account? ➔{" "}
