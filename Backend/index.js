@@ -10,7 +10,6 @@ dbConnectionState().then((res) => {
     if (err) {
       throw err;
     }
-
     console.log("Database Connected !");
     console.log("Server Running on port: ", PORT);
   });
