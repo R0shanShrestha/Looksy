@@ -59,6 +59,7 @@ const UserContext = ({ children }) => {
 
   // login
   const login = async (data) => {
+    alert("We entered")
     try {
       setError(false);
       setLoading(true);

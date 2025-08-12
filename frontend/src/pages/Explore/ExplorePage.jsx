@@ -157,7 +157,7 @@ const ExplorePage = () => {
       </div>
 
       {/* Right portion */}
-      <div className=" w-full p-2 gap-0   px-2 flex ">
+      <div className=" w-[90%] p-2 gap-0   px-2 flex ">
         {isLoading != true ? (
           storage != "" ? (
             isLoading ? (
@@ -174,14 +174,14 @@ const ExplorePage = () => {
               <Swiper
                 slidesPerView={3}
                 grid={{
-                  rows: 2,
+                  rows: 1,
                 }}
                 spaceBetween={30}
                 pagination={{
                   clickable: true,
                 }}
                 modules={[Grid, Pagination]}
-                className="mySwiper "
+                className="mySwiper  w-full "
               >
                 {storage?.results?.map((imgInfos) => {
                   return (

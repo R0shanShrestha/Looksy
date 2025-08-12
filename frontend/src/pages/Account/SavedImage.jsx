@@ -13,7 +13,7 @@ const SavedImage = () => {
   const { favImg } = useContext(PhotoContextProvider);
   // console.log(favImg);
   return (
-    <div className="  w-full   max-w-[800px] pb-2">
+    <div className="w-screen pb-2">
       {favImg != "" ? (
         <Swiper
           slidesPerView={4}
@@ -23,7 +23,7 @@ const SavedImage = () => {
             clickable: true,
           }}
           modules={[Pagination]}
-          className="mySwiper  flex w-full "
+          className="mySwiper   flex w-full "
         >
           {favImg.map((data, idx) => {
             return (

@@ -46,18 +46,17 @@ const PhotoContext = ({ children }) => {
       // fetching the data
       const res = await axios.get(uri);
       // console.log(res.data.results);
-      setTimeout(() => {
-        setIsLoading(false);
-        setrecentSearch(res.data.results);
-        setStorage({
-          total: res.data.total,
-          total_pages: res.data.total_pages,
-          results: res.data.results,
-        });
-        // setIsLoading(false);
-      }, 5000);
+      setIsLoading(false);
+      setrecentSearch(res.data.results);
+      setStorage({
+        total: res.data.total,
+        total_pages: res.data.total_pages,
+        results: res.data.results,
+      });
+      // setIsLoading(false);
     } catch (error) {
       if (error.message == "Network Error") {
+        setIsLoading(false);
         SetServerMsg({
           type: "network",
           msg: "No Internet Connection !",
@@ -70,7 +69,6 @@ const PhotoContext = ({ children }) => {
           payload: {},
         });
       }
-      setIsLoading(false);
     }
   }
 
