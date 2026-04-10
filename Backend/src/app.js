@@ -9,7 +9,7 @@ app.use(
   cors({
     origin: [
       "https://looksy-omega.vercel.app",
-      "https://looksy-8tlv.vercel.app/",
+      "https://looksy-8tlv.vercel.app",
       "http://localhost:5173",
       "http://192.168.1.67:8000",
     ],
