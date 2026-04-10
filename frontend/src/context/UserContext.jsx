@@ -28,28 +28,29 @@ const UserContext = ({ children }) => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      const user = res.data;
+      const user =  await res.data;
       setLoading(false);
       SetToken("authToken", user.authtoken);
       SetToken("user", JSON.stringify(user.user));
 
       setLogged(true);
-      alert("Sign up successfully");
+      toast.success("Sign up successfully");
     } catch (error) {
+      console.log(error)
       if (error.data != "") {
         // console.log(error);
-        if (error.response.data.error) {
+        if (error?.response?.data?.error ) {
           error.response.data.error.map((err) => {
-            alert(err.msg);
+            toast.error(err.msg);
           });
         } else {
-          alert(error.response.data.msg);
+          toast.error(error.response.data.msg);
         }
       } else {
-        alert(
+        toast.error(
           error.response.data.msg == undefined
             ? "Fields Required"
-            : alert(error.response.data.msg),
+            : toast.error(error.response.data.msg),
         );
       }
       setError(true);
@@ -99,9 +100,9 @@ const UserContext = ({ children }) => {
       setUser(user.user);
       setLogged(true);
 
-      alert("User Logged In");
+      toast.error("User Logged In");
     } catch (error) {
-      alert(
+      toast.error(
         error.response.data.msg == undefined
           ? "Fields Required"
           : error.response.data.msg,

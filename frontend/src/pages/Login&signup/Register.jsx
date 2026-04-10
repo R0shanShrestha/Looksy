@@ -30,15 +30,11 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center px-4 py-10">
-      
       {/* CARD */}
       <div className="w-full max-w-md bg-zinc-950 rounded-2xl p-6 sm:p-8 shadow-xl border border-zinc-800">
-        
         {/* HEADER */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">
-            Create Account
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Create Account</h1>
           <p className="text-sm text-slate-400 mt-2">
             Start discovering images instantly
           </p>
@@ -46,7 +42,6 @@ const Register = () => {
 
         {/* FORM */}
         <form className="space-y-4">
-
           {/* USERNAME */}
           <div className="flex items-center gap-2 bg-zinc-900 px-3 py-3 rounded-lg border border-zinc-800">
             <FaUser className="text-slate-400" />
@@ -86,7 +81,15 @@ const Register = () => {
             disabled={isLoading}
             className="w-full py-3 rounded-lg font-semibold transition bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
           >
-            {isLoading ? "Creating..." : "Create Account"}
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-10">
+                {/* <h1>Creating account</h1> */}
+                {/* <img src="../../../public/Loading_icon.gif" alt="" width={25} /> */}
+                <div className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin" />
+              </div>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 
