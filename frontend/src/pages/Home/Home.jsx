@@ -41,7 +41,7 @@ const Home = () => {
         </p>
 
         {/* SEARCH BOX */}
-        <div className="w-full max-w-[600px] flex flex-col gap-3">
+        <div className=" w-full  lg:max-w-[600px] flex flex-col gap-3">
           <div className="flex flex-col sm:flex-row gap-2 w-full justify-center">
             <input
               value={search}
