@@ -6,20 +6,44 @@ import { PhotoContextProvider } from "../context/PhotoContext";
 
 const UserAuthWrapper = ({ children }) => {
   const { setUser } = useContext(UserContextProvider);
-  const {setStorage} = useContext(PhotoContextProvider)
+  const { setStorage } = useContext(PhotoContextProvider);
+
   const token = GetToken("authToken");
   const user = GetToken("user");
-  // console.log(user)
-  const navigator = useNavigate();
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!token || !user) {
-      setStorage([])
-      navigator("/login");
-    }
-    setUser(JSON.parse(user));
-  }, []);
+      // clear state properly
+      setUser(null);
+      setStorage({
+        total: 0,
+        total_pages: 0,
+        results: [],
+      });
 
-  return <div>{children}</div>;
+      navigate("/login");
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(user));
+    } catch (err) {
+      console.log("Invalid user data");
+
+      setUser(null);
+      setStorage({
+        total: 0,
+        total_pages: 0,
+        results: [],
+      });
+
+      navigate("/login");
+    }
+  }, [token, user, setUser, setStorage, navigate]);
+
+  return <>{children}</>;
 };
 
 export default UserAuthWrapper;

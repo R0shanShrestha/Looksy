@@ -1,25 +1,30 @@
-import React, { useContext, useRef, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
-import BottomBar from "./components/BottomBar";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
-import { PhotoContextProvider } from "./context/PhotoContext";
-import PopobBanner from "./components/PopobBanner";
-const App = () => {
-  
-  return (
-    <>
-      <div className="bg w-screen  h-dvh items-center relative  overflow-hidden justify-between  no-scroller  text-white">
-        <Header />
-            
-        <PopobBanner  />
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-        <Outlet />
-        <BottomBar />
-        <Footer />
-      </div>
-    </>
+const App = () => {
+  return (
+    <div className="bg min-h-screen flex flex-col text-white">
+      {/* HEADER */}
+      <Header />
+
+      {/* your routes/layout */}
+
+      <ToastContainer position="top-right" autoClose={2000} />
+
+      {/* MAIN CONTENT */}
+      <main className="flex-1 w-full">
+        <div className="max-w-[1400px] mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* FOOTER */}
+      <Footer />
+    </div>
   );
 };
 

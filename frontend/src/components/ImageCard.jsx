@@ -1,106 +1,126 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { FaDownload, FaHeart } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { MdBookmarkAdd } from "react-icons/md";
-import { MdBookmarkAdded } from "react-icons/md";
+import { useContext, useRef, useState } from "react";
+import { FaHeart } from "react-icons/fa";
+import { MdBookmarkAdd, MdBookmarkAdded, MdDownload } from "react-icons/md";
 import { PhotoContextProvider } from "../context/PhotoContext";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const ImageCard = ({ data }) => {
-  const { setFavImg, favImg, setFullScreen } = useContext(PhotoContextProvider);
-  const [isTitle, setTitle] = useState(false);
+  const { favImg, toggleFav, setFullScreen } = useContext(PhotoContextProvider);
 
-  // ref
+  const [isHover, setHover] = useState(false);
   const descBoxRef = useRef();
+
+  // animation
   useGSAP(() => {
-    if (isTitle) {
-      gsap.to(descBoxRef.current, {
-        duration: 0.1,
-        translateY: "0%",
-      });
-    } else {
-      gsap.to(descBoxRef.current, {
-        duration: 0.1,
-        translateY: "100%",
-      });
-    }
-  }, [isTitle]);
+    if (!descBoxRef.current) return;
 
-  // [
-  //     ...pre,
-  //     {
-  //       id: data?.user?.id,
-  //       userimage: data?.user?.profile_image.small,
-  //       username: data.user.name,
-  //       postedImage: data?.urls.raw,
-  //       likes: data?.likes,
-  //       desc: data?.alt_description,
-  //     },
-  //   ]
-  // func
-  const addtoSave = (data) => {
-    let checkExists = favImg.filter((pre) => {
-      return pre.id.includes(data.id);
+    gsap.to(descBoxRef.current, {
+      duration: 0.2,
+      y: isHover ? 0 : "100%",
+      ease: "power2.out",
     });
+  }, [isHover]);
 
-    if (checkExists == "") {
-      setFavImg((pre) => [...pre, data]);
-    }else{
-      alert("Already BookedMarked")
+  // check saved
+  const isSaved = favImg.some((item) => item.id === data.id);
+
+  const handleFav = () => {
+    toggleFav(data);
+  };
+
+  //  DOWNLOAD FUNCTION
+  const handleDownload = async () => {
+    try {
+      const res = await fetch(data?.urls?.full);
+      const blob = await res.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = `image-${data.id}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed", error);
     }
   };
+
   return (
-    <div className="card  cursor-pointer  border  text-slate-900 overflow-hidden w-full   duration-300   rounded-2xl sm:rounded-none h-fit flex flex-col justify-between relative">
-      <div className="flex items-center gap-2 p-2 absolute text-slate-500 hover:text-slate-100 font-semibold shadow-xl hover:bg-slate-600 w-full duration-300 justify-between">
-        <div className="flex gap-2">
+    <div className="relative w-full break-inside-avoid overflow-hidden rounded-xl bg-zinc-900 shadow-md">
+      
+      {/* TOP BAR */}
+      <div className="absolute top-0 left-0 w-full z-10 flex items-center justify-between p-2 bg-black/50 backdrop-blur-md text-white">
+        
+        {/* USER */}
+        <div className="flex items-center gap-2 min-w-0">
           <img
-            src={data?.user?.profile_image.small}
-            alt="Not found"
-            className="rounded-full w-[30px] h-[30px]"
+            src={data?.user?.profile_image?.small || "/avatar.png"}
+            className="w-[28px] h-[28px] rounded-full object-cover"
           />
-          <span>{data.user.name}</span>
+          <span className="text-sm font-medium truncate max-w-[120px]">
+            {data?.user?.name || "Unknown"}
+          </span>
         </div>
-        <div
-          className="text-yellow-100 text-xl hover:scale-125 transition-all duration-300"
-          onClick={() => {
-            addtoSave(data);
-          }}
-        >
-          <MdBookmarkAdd />
+
+        {/* ACTIONS */}
+        <div className="flex items-center gap-2">
+          
+          {/* DOWNLOAD */}
+          <button
+            onClick={handleDownload}
+            className="hover:scale-110 transition text-xl"
+          >
+            <MdDownload />
+          </button>
+
+          {/* SAVE */}
+          <button
+            onClick={handleFav}
+            className="hover:scale-110 transition text-xl"
+          >
+            {isSaved ? (
+              <MdBookmarkAdded className="text-yellow-300" />
+            ) : (
+              <MdBookmarkAdd className="text-slate-300" />
+            )}
+          </button>
         </div>
       </div>
 
-      <div>
-        <img
-          src={data?.urls.raw}
-          alt="not found"
-          onMouseEnter={() => {
-            setTitle(true);
-          }}
-          onMouseLeave={() => {
-            setTitle(false);
-          }}
-          className=" w-full h-full object-cover md:object-contain object-top "
-        />
-      </div>
-      <div className="flex absolute bottom-0 p-2 items-center gap-2 text-white">
-        <span className="text-red-500 ">
+      {/* IMAGE */}
+      <img
+        src={data?.urls?.regular}
+        alt={data?.alt_description || "image"}
+        loading="lazy"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={() => setFullScreen(data)}
+        className="w-full h-auto object-cover block"
+      />
+
+      {/* BOTTOM INFO */}
+      <div className="absolute bottom-0 left-0 w-full flex items-center justify-between p-2 text-white bg-gradient-to-t from-black/80 to-transparent">
+        <div className="flex items-center gap-1 text-red-400">
           <FaHeart />
-        </span>
-        <span className="bg-slate-800 text-sm px-2 rounded-xl">
-          {data?.likes}
-        </span>
+          <span className="text-xs bg-black/40 px-2 py-0.5 rounded-full">
+            {data?.likes || 0}
+          </span>
+        </div>
       </div>
 
-      {/* Description box */}
-
+      {/* DESCRIPTION */}
       <div
         ref={descBoxRef}
-        className="absolute descBox translate-y-[100%] w-full bg-white bottom-0 flex flex-wrap h-fit px-2 capitalize p-2 duration-300
-      "
+        className="absolute bottom-0 left-0 w-full bg-white text-black p-2 text-sm translate-y-full"
       >
-        <p>{data?.alt_description}</p>
+        <p className="line-clamp-3">
+          {data?.alt_description || "No description available"}
+        </p>
       </div>
     </div>
   );

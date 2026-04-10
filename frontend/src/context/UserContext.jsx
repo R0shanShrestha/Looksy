@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GetToken, SetToken } from "../utils/LocalStorageHandler";
+import { toast } from "react-toastify";
 export const UserContextProvider = createContext({
   register: () => {},
   login: () => {},
@@ -12,7 +13,7 @@ export const UserContextProvider = createContext({
 });
 
 const UserContext = ({ children }) => {
-  const BackendUri = import.meta.env.VITE_BACKEND_URI;
+  const BackendUri = import.meta.env.VITE_BACKEND_URI + "/api/v1/user";
   const [user, setUser] = useState(null);
   const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -41,15 +42,14 @@ const UserContext = ({ children }) => {
           error.response.data.error.map((err) => {
             alert(err.msg);
           });
-        }
-        else{
-          alert(error.response.data.msg)
+        } else {
+          alert(error.response.data.msg);
         }
       } else {
         alert(
           error.response.data.msg == undefined
             ? "Fields Required"
-            : alert(error.response.data.msg)
+            : alert(error.response.data.msg),
         );
       }
       setError(true);
@@ -59,7 +59,6 @@ const UserContext = ({ children }) => {
 
   // login
   const login = async (data) => {
-    alert("We entered")
     try {
       setError(false);
       setLoading(true);
@@ -74,12 +73,12 @@ const UserContext = ({ children }) => {
       SetToken("user", JSON.stringify(user.user));
       setLogged(true);
 
-      alert("User Logged In");
+      toast.success("User Logged In");
     } catch (error) {
-      alert(
+      toast.error(
         error.response.data.msg == undefined
           ? "Fields Required"
-          : error.response.data.msg
+          : error.response.data.msg,
       );
       setError(true);
       setLoading(false);
@@ -105,7 +104,7 @@ const UserContext = ({ children }) => {
       alert(
         error.response.data.msg == undefined
           ? "Fields Required"
-          : error.response.data.msg
+          : error.response.data.msg,
       );
       setError(true);
       setLoading(false);

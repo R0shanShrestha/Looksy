@@ -8,79 +8,91 @@ const Login = () => {
   const { login, logged } = useContext(UserContextProvider);
   const navTo = useNavigate();
 
-  useEffect(() => {
-    const token = GetToken("authToken");
-    if (token) {
-      navTo("/home");
-    }
-  }, [logged]);
   const email = useRef();
   const password = useRef();
 
+  useEffect(() => {
+    const token = GetToken("authToken");
+    if (token) navTo("/home");
+  }, [logged]);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    const data = {
+
+    login({
       email: email.current.value,
       password: password.current.value,
-    };
-
-    login(data);
+    });
   };
+
   return (
-    <div className="flex flex-col space-y-10  w-[80vw] mx-auto mt-10">
-      <div className="justify-center flex flex-col items-center">
-        <h1 className="text-3xl font-semibold">Welcome Back to Looksy!</h1>
-        <p className="text-sm font-light text-slate-300">
-          Log in to discover amazing images.
-        </p>
-      </div>
-      <form className="w-[400px] mx-auto px-1  flex flex-col space-y-2 py-2 gap-1">
-        <div className=" flex space-x-2  items-center border px-2 rounded-xl bg-white text-zinc-900 ">
-          <span className="text-3xl">
-            <IoMail />
-          </span>
-          <input
-            ref={email}
-            type="email"
-            placeholder="Email"
-            className=" w-full py-4 placeholder:text-zinc-500 outline-none"
-          />
-        </div>
-        <div className=" flex space-x-2  items-center border px-2 rounded-xl bg-white text-zinc-900 ">
-          <span className="text-3xl">
-            <IoLockClosed />
-          </span>
-          <input
-            ref={password}
-            type="password"
-            placeholder="Password"
-            className=" w-full py-4 placeholder:text-zinc-500 outline-none"
-          />
-        </div>
-        <div className=" flex justify-end">
-          <p className="font-semibold text-sm">Forget Password?</p>
+    <div className="flex items-center justify-center px-4 py-10">
+
+      {/* CARD */}
+      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+
+        {/* HEADER */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            Welcome Back
+          </h1>
+          <p className="text-sm text-slate-400 mt-2">
+            Log in to continue exploring images
+          </p>
         </div>
 
-        <div className=" flex justify-center">
+        {/* FORM */}
+        <form className="space-y-4">
+
+          {/* EMAIL */}
+          <div className="flex items-center gap-2 bg-zinc-900 px-3 py-3 rounded-lg border border-zinc-800">
+            <IoMail className="text-slate-400" />
+            <input
+              ref={email}
+              type="email"
+              placeholder="Email"
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="flex items-center gap-2 bg-zinc-900 px-3 py-3 rounded-lg border border-zinc-800">
+            <IoLockClosed className="text-slate-400" />
+            <input
+              ref={password}
+              type="password"
+              placeholder="Password"
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
+
+          {/* FORGOT */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="text-xs text-slate-400 hover:text-white transition"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {/* BUTTON */}
           <button
-            onClick={(e) => {
-              submitHandler(e);
-            }}
-            className="hover:bg-blue-950 shadow-sm shadow-blue-400 bg-blue-500  p-3 w-full rounded-xl text-xl font-bold"
+            onClick={submitHandler}
+            className="w-full py-3 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700 transition"
           >
             Log In
           </button>
-        </div>
-        <div className="  text-center flex flex-col gap-5 w-[400px] mt-5 mx-auto">
-          <hr />
-          <p>
-            "Don't have an account?" ➔{" "}
-            <Link to={"/register"} className="font-black text-blue-400">
-              Sign Up
-            </Link>
-          </p>
-        </div>
-      </form>
+        </form>
+
+        {/* SIGNUP LINK */}
+        <p className="text-center text-sm text-slate-400 mt-6">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-blue-400 font-semibold">
+            Sign Up
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

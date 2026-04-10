@@ -1,20 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { BsBookmarkHeartFill } from "react-icons/bs";
 import { PhotoContextProvider } from "../../context/PhotoContext";
 import ImageCard from "../../components/ImageCard";
 import { UserContextProvider } from "../../context/UserContext";
-// Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
 
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/grid";
-import "swiper/css/pagination";
-
-// import required modules
-import { Grid, Pagination } from "swiper/modules";
 const ExplorePage = () => {
-  // Context
   const {
     searchImage,
     storage,
@@ -24,195 +14,163 @@ const ExplorePage = () => {
     search,
     favImg,
   } = useContext(PhotoContextProvider);
+
   const { user, logged } = useContext(UserContextProvider);
 
-  // states
   const [numPage, setNumPage] = useState(1);
-  // ref
-  // console.log(favImg);
-  // callback
+
   const searchHandler = (e, type) => {
     e.preventDefault();
-    if (logged) {
-      if (search != "") {
-        // console.log(type)
-        switch (type) {
-          case "search":
-            // direct searching
-            setNumPage(1);
-            try {
-              searchImage(search);
-            } catch (error) {
-              alert("error in ExplorePage");
-            }
-            break;
-          case "more":
-            // console.log(numPage)
-            // Filtering with page number
 
-            try {
-              setNumPage((pre) => (pre += 1));
-              // console.log(numPage)
-              searchImage(search, numPage);
-            } catch (error) {
-              SetServerMsg({
-                state: true,
-                type: "other",
-                msg: "Fail to Fetch",
-              });
-            }
-            break;
+    if (!logged) return;
 
-          default:
-            break;
-        }
-      } else {
-        SetServerMsg({
-          state: true,
-          type: "other",
-          msg: "Input Required",
-        });
-      }
+    if (search === "") {
+      SetServerMsg({
+        state: true,
+        type: "other",
+        msg: "Input Required",
+      });
+      return;
+    }
+
+    if (type === "search") {
+      setNumPage(1);
+      searchImage(search, 1);
+    }
+
+    if (type === "more") {
+      const nextPage = numPage + 1;
+      setNumPage(nextPage);
+      searchImage(search, nextPage);
     }
   };
 
   return (
-    <div className="w-[80vw] h-[70vh]  mx-auto px-5 pt-1 mt-10 flex">
-      {/* Left Side bar */}
-      <div className=" min-w-[300px] flex flex-col p-2 gap-6">
-        {/* User Account  */}
-        <div className="bg-zinc-950 w-full py-3  px-2 rounded-md flex gap-3 items-center">
-          <img
-            src="https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://img5.thuthuatphanmem.vn/uploads/2021/11/12/hinh-anh-anime-don-gian-hinh-nen-anime-don-gian-ma-dep_092443354.png"
-            alt="Not found"
-            className="w-[40px] h-[40px] object-cover rounded-full object-top bg-white"
-          />
-          <h1>{user?.username}</h1>
-        </div>
-        {/* Explore search  */}
-        <div className="bg-zinc-950 w-full  px-2  py-3 rounded-md space-y-3">
-          <h1 className="text-2xl font-semibold">
-            Explore. Find. Get Inspired.
-          </h1>
-          <form className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Search Images..."
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              value={search}
-              className="bg-white w-full p-2.5 rounded-md text-black placeholder:text-slate-600 text-sm outline-none"
-            />
-            <button
-              onClick={(e) => {
-                searchHandler(e, "search");
-              }}
-              className=" p-2 text-sm bg-blue-600 rounded-md hover:bg-blue-800 duration-300"
-            >
-              Search
-            </button>
-          </form>
-          {/* Page infos */}
-          <hr className="  border-slate-500 " />
-          {storage != "" && (
-            <div className="flex gap-2 text-sm flex-col">
-              <div className="columns-2">
-                <h1>Total Result: {storage?.total}</h1>
-                <h1>Total pages: {storage?.total_pages + 1}</h1>
-              </div>
-              <h1>Displaying Images: {storage?.results?.length}</h1>
-              <h1>
-                Page: {numPage}/{storage?.total_pages + 1}
-              </h1>
-              {storage?.total_pages >= numPage && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={(e) => {
-                      searchHandler(e, "more");
-                    }}
-                    className="border px-3 rounded-md bg-white text-slate-900 font-semibold outline-none py-1"
-                  >
-                    Show more
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        {/* Other Options */}
-        <div className="bg-zinc-950 w-full  min-h-[50px] rounded-md flex flex-col justify-center px-2">
-          <div className="flex items-center gap-3 cursor-pointer  p-2 hover:bg-slate-400 duration-500 transition-all hover:rounded-md  hover:font-bold">
-            <span>
-              <BsBookmarkHeartFill size={20} />
-            </span>
-            <h1>Saved Image</h1>
-          </div>
-          {favImg.length > 0 && (
-            <div className="border-t mt-2 pt-2 pb-2 text-sm">
-              Images: {favImg.length}
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="w-full min-h-screen px-3 sm:px-4 md:px-6 lg:px-8 pt-2 mt-6">
 
-      {/* Right portion */}
-      <div className=" w-[90%] p-2 gap-0   px-2 flex ">
-        {isLoading != true ? (
-          storage != "" ? (
-            isLoading ? (
-              <div className=" h-[50%] flex items-center justify-center w-full flex-col">
-                {/* <h1 className="font-semibold text-xl">Loding Images ?</h1> */}
+      {/* ✅ RESPONSIVE GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 w-full">
+
+        {/* LEFT SIDE */}
+        <div className="w-full flex flex-col gap-4">
+
+          {/* USER */}
+          <div className="bg-zinc-950 w-full py-3 hidden px-3 rounded-md  gap-3 items-center">
+            <img
+              src="https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://img5.thuthuatphanmem.vn/uploads/2021/11/12/hinh-anh-anime-don-gian-hinh-nen-anime-don-gian-ma-dep_092443354.png"
+              className="w-[40px] h-[40px] object-cover rounded-full bg-white"
+            />
+            <h1 className="text-sm font-semibold">
+              {user?.username || "Guest"}
+            </h1>
+          </div>
+
+          {/* SEARCH */}
+          <div className="bg-zinc-950 w-full px-3 py-4 rounded-md space-y-3">
+            <h1 className="text-lg font-semibold">
+              Explore. Find. Get Inspired.
+            </h1>
+
+            <form className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Search Images..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-white w-full p-2.5 rounded-md text-black text-sm outline-none"
+              />
+              <button
+                onClick={(e) => searchHandler(e, "search")}
+                className="px-3 text-sm bg-blue-600 rounded-md hover:bg-blue-800"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+
+          {/* SAVED */}
+          <div className="bg-zinc-950 w-full rounded-md flex flex-col px-2 py-2">
+            <div className="flex items-center gap-3 cursor-pointer p-2 hover:bg-slate-800 rounded-md">
+              <BsBookmarkHeartFill size={18} />
+              <h1 className="text-sm">Saved Image</h1>
+            </div>
+
+            {favImg.length > 0 && (
+              <div className="border-t mt-2 pt-2 text-xs text-slate-400">
+                Images: {favImg.length}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="w-full min-w-0">
+
+          <div className="w-full">
+
+            {/* LOADING */}
+            {isLoading ? (
+              <div className="flex items-center justify-center flex-col gap-2 py-10">
                 <img
                   src="../../../public/loading_icon.gif"
-                  alt="not found"
-                  className="w-[80px]"
+                  className="w-[60px]"
                 />
-                <h1>Loading images</h1>
+                <h1 className="text-sm">Loading images...</h1>
               </div>
+
+            ) : storage && storage.results ? (
+              <>
+                {/* PAGE INFO */}
+                <div className="text-xs text-slate-400 mb-2">
+                  Page {numPage} of {storage.total_pages}
+                </div>
+
+                {/* IMAGE GRID */}
+                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3">
+                  {storage.results.map((img) => (
+                    <div
+                      key={img.id}
+                      className="mb-3 break-inside-avoid w-full"
+                    >
+                      <ImageCard data={img} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* LOAD MORE */}
+                {numPage < storage.total_pages && (
+                  <div className="w-full flex justify-center mt-4">
+                    <button
+                      onClick={(e) => searchHandler(e, "more")}
+                      className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-md text-sm"
+                    >
+                      Load More
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
-              <Swiper
-                slidesPerView={3}
-                grid={{
-                  rows: 1,
-                }}
-                spaceBetween={30}
-                pagination={{
-                  clickable: true,
-                }}
-                modules={[Grid, Pagination]}
-                className="mySwiper  w-full "
-              >
-                {storage?.results?.map((imgInfos) => {
-                  return (
-                    <SwiperSlide className=" max-w-[300px] min-h-[300px]">
-                      <div
-                        className=" min-w-[300px] max-w-[300px] h-fit  rounded-xl overflow-hidden "
-                        key={imgInfos.id}
-                      >
-                        <ImageCard data={imgInfos} />
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            )
-          ) : (
-            <div className=" h-[50%] flex items-center justify-center">
-              <h1 className="font-semibold text-xl">Search. what you want ?</h1>
-            </div>
-          )
-        ) : (
-          <div className=" h-[50%] flex items-center justify-center w-full flex-col">
-            {/* <h1 className="font-semibold text-xl">Loding Images ?</h1> */}
-            <img
-              src="../../../public/loading_icon.gif"
-              alt="not found"
-              className="w-[80px]"
-            />
-            <h1>Loading images</h1>
+              <div className="flex items-center justify-center w-full py-20">
+                <div className="flex flex-col items-center gap-3 text-center px-4">
+
+                  <div className="w-14 h-14 rounded-full bg-zinc-900 border flex items-center justify-center">
+                    🔍
+                  </div>
+
+                  <h1 className="font-semibold text-lg">
+                    Search something you want
+                  </h1>
+
+                  <p className="text-xs text-slate-400">
+                    Start typing a keyword
+                  </p>
+
+                </div>
+              </div>
+            )}
+
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

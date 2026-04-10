@@ -2,11 +2,21 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="py-5 hidden sm:flex mx-auto w-full bottom-0 absolute ">
-      <p className="text-sm font-semibold mx-auto">
-        © 2025 Looksy. Inspiring creativity, one search at a time.
-      </p>
-    </div>
+    <footer className="w-full mt-auto border-t border-zinc-800 bg-zinc-950/40 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+        
+        {/* Left text */}
+        <p className="text-xs sm:text-sm text-slate-300">
+          © 2025 Looksy. All rights reserved.
+        </p>
+
+        {/* Right small note */}
+        <p className="text-xs text-slate-500">
+          Built for creators ✨
+        </p>
+
+      </div>
+    </footer>
   );
 };
 

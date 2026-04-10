@@ -14,6 +14,7 @@ UserRoute.post(
   [body("email").isEmail().withMessage("Field is required")],
   loginController
 );
+// sign up
 UserRoute.post(
   "/signup",
   [

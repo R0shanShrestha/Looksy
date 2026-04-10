@@ -1,91 +1,126 @@
-import { FaEdit } from "react-icons/fa";
-import UserCard from "../../components/UserCard";
-import { FcAbout } from "react-icons/fc";
-import About from "./About";
-import { useContext, useEffect, useState } from "react";
+import { FaHeart, FaBookmark, FaUser } from "react-icons/fa";
+import { useContext, useState } from "react";
 import SavedImage from "./SavedImage";
 import { UserContextProvider } from "../../context/UserContext";
 import { Link } from "react-router-dom";
 
 const UserProfile = () => {
-  const [tab, setTab] = useState("savedImage");
   const { user } = useContext(UserContextProvider);
+  const [tab, setTab] = useState("saved");
+
+  const demo = {
+    username: user?.username || "guest_user",
+    email: "guest@mail.com",
+    bio: "Just exploring and saving beautiful images.",
+    location: "Nepal",
+    joined: "2025",
+  };
 
   return (
-    <div className="w-[80%] mx-auto   p-3 h-[80vh] mt-10 flex  flex-col gap-3">
-      <div className="p-4  rounded-2xl bg-zinc-950">
-        {/* UserInfo */}
-        <div className="flex items-center  overflow-hidden rounded-xl gap-5">
-          <img
-            src="https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://img5.thuthuatphanmem.vn/uploads/2021/11/12/hinh-anh-anime-don-gian-hinh-nen-anime-don-gian-ma-dep_092443354.png"
-            alt="no found"
-            className="h-[150px] w-[150px] object-cover  rounded-full"
-          />
-          <div className="flex flex-col">
-            <h1 className="text-2xl font-semibold">{user?.username}</h1>
-            {/* <h3 className="text-sm text-slate-100">beast009</h3> */}
-            <div className="flex gap-3 mt-3">
-              <button className="bg-blue-600 hover:bg-blue-500 text-white py-2 flex px-4 rounded items-center gap-3 font-semibold">
-                Edit <FaEdit />
-              </button>
+    <div className="w-full min-h-screen px-[50px] pt-10 text-white bg-black">
 
-              <Link
-                to={"/logout"}
-                className=" text-white py-2 flex px-4 rounded items-center gap-3 hover:bg-white hover:text-slate-900 font-semibold"
-              >
-                Log Out
-              </Link>
+      <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-120px)]">
+
+        {/* LEFT PROFILE CARD */}
+        <div className="w-full lg:w-[320px] shrink-0 bg-zinc-950 rounded-2xl p-6 flex flex-col gap-6">
+
+          {/* USER */}
+          <div className="flex flex-col items-center text-center gap-4">
+
+            <img
+              src="https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://img5.thuthuatphanmem.vn/uploads/2021/11/12/hinh-anh-anime-don-gian-hinh-nen-anime-don-gian-ma-dep_092443354.png"
+              className="w-[110px] h-[110px] rounded-full object-cover border border-zinc-700"
+            />
+
+            <div>
+              <h1 className="text-xl font-bold">{demo.username}</h1>
+              <p className="text-xs text-slate-400">{demo.email}</p>
+            </div>
+
+          </div>
+
+          {/* INFO */}
+          <div className="bg-zinc-900 p-4 rounded-xl text-sm text-slate-300">
+            <p>{demo.bio}</p>
+
+            <div className="mt-3 text-xs text-slate-400 space-y-1">
+              <p>📍 {demo.location}</p>
+              <p>📅 Joined {demo.joined}</p>
             </div>
           </div>
+
+          {/* SIMPLE STATS */}
+          <div className="grid grid-cols-2 gap-3">
+
+            <div className="bg-zinc-900 p-3 rounded-lg text-center">
+              <FaBookmark className="mx-auto text-yellow-400" />
+              <p className="mt-1 text-sm">Saved</p>
+            </div>
+
+            <div className="bg-zinc-900 p-3 rounded-lg text-center">
+              <FaHeart className="mx-auto text-red-400" />
+              <p className="mt-1 text-sm">Liked</p>
+            </div>
+
+          </div>
+
+          {/* LOGOUT */}
+          <Link
+            to="/logout"
+            className="text-center border py-2 rounded-lg hover:bg-white hover:text-black transition"
+          >
+            Logout
+          </Link>
+
         </div>
-      </div>
-      <div className=" rounded-xl overflow-hidden  h-fit  gap-3 grid  ">
-        {/* saveimage  */}
-        <div className="w-full  bg-zinc-950 h-full rounded-xl  px-3 py-2">
-          {/* tabs */}
-          <div className="p-3 flex gap-5 cursor-pointer">
-            {/* <span
-              className="hover:font-semibold duration-300"
-              onClick={() => {
-                setTab("about");
-              }}
-            >
-              About
-            </span>
-            <span>|</span> */}
-            <span
-              className="font-semibold duration-300"
-              onClick={() => {
-                setTab("savedImage");
-              }}
+
+        {/* RIGHT SIDE */}
+        <div className="flex-1 bg-zinc-950 rounded-2xl p-5 flex flex-col min-w-0">
+
+          {/* TABS */}
+          <div className="flex gap-3 mb-4">
+
+            <button
+              onClick={() => setTab("saved")}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                tab === "saved"
+                  ? "bg-blue-600"
+                  : "bg-zinc-900"
+              }`}
             >
               Saved Images
-            </span>
+            </button>
+
+            <button
+              onClick={() => setTab("liked")}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                tab === "liked"
+                  ? "bg-red-600"
+                  : "bg-zinc-900"
+              }`}
+            >
+              Liked Images
+            </button>
+
           </div>
-          <hr />
-          {/* display selected tabs */}
-          <div className="flex max-h-[250px]   mt-3">
-            {/* {tab == "about" && <About />}{" "} */}
-            {tab == "savedImage" && <SavedImage />}
+
+          <hr className="border-zinc-700 mb-4" />
+
+          {/* CONTENT AREA */}
+          <div className="flex-1 overflow-y-auto no-scroller pr-2">
+
+            {tab === "saved" ? (
+              <SavedImage />
+            ) : (
+              <div className="text-center text-slate-400 mt-10">
+                No liked images yet
+              </div>
+            )}
+
           </div>
+
         </div>
-        {/* Followed Profiles */}
-        <div className=" bg-zinc-950 h-fit rounded-xl p-3 flex flex-col gap-3">
-          <div className=" space-y-4 ">
-            <h1 className="">Followed Profiles</h1>
-            <hr />
-          </div>
-          <div className="h-full  p-2 w-full flex gap-5 cursor-pointer">
-            <h1>No Followers</h1>
-            {/* <UserCard
-              data={{
-                fullname: "Roshan Shrestha",
-                active: "3 min ago",
-                img: "https://i.pinimg.com/736x/93/f6/dd/93f6dd8cf10495b6c4ddd30f89c1830c.jpg",
-              }}
-            /> */}
-          </div>
-        </div>
+
       </div>
     </div>
   );
