@@ -4,36 +4,22 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
-
-// ✅ CORS (ONLY ONCE)
-const allowedOrigins = [
-  "https://looksy-omega.vercel.app",
-  "http://localhost:5173",
-  "http://192.168.1.67:8000",
-];
-
+// Allow only your frontend origin
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: [
+      "https://looksy-omega.vercel.app",
+      "https://looksy-8tlv.vercel.app/",
+      "http://localhost:5173",
+      "http://192.168.1.67:8000",
+    ],
     credentials: true,
-  })
+  }),
 );
+app.use(cors());
 
-// middlewares
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// routes
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
