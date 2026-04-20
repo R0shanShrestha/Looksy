@@ -12,21 +12,24 @@ import RecentImageCard from "../../components/RecentImageCard";
 import { UserContextProvider } from "../../context/UserContext";
 
 const Home = () => {
-  const { recentSearch, setSearch, search, searchImage } =
-    useContext(PhotoContextProvider);
+  const { setSearch, search, searchImage } = useContext(PhotoContextProvider);
 
   const { logged } = useContext(UserContextProvider);
 
   const [recImg, setRecImg] = useState([]);
 
   useEffect(() => {
-    if (Array.isArray(recentSearch)) {
-      setRecImg(recentSearch);
+    const images = [];
+    for (let i = 1; i <= 6; i++) {
+      images.push(`/recentimages/${i}.jpg`);
+
+      setRecImg(images);
     }
-  }, [recentSearch]);
+    setRecImg(images);
+  }, []);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-5 md:px-6 lg:px-8 mt-8">
+    <div className="w-full max-w-[1200px]    mx-auto px-4 sm:px-5 md:px-6 lg:px-8 mt-8">
       {/* HERO */}
       <div className="flex flex-col items-center text-center gap-6 py-6 sm:py-8">
         {/* TITLE */}
@@ -108,7 +111,7 @@ const Home = () => {
               pagination={{ clickable: true }}
               modules={[EffectCoverflow, Pagination]}
             >
-              {recImg.map((data, idx) => (
+              {recImg?.map((data, idx) => (
                 <SwiperSlide
                   key={idx}
                   className="flex justify-center items-center py-4"

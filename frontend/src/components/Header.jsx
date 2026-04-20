@@ -29,7 +29,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="w-full border-b border-zinc-800 bg-zinc-950/70 backdrop-blur-md sticky top-0 z-50">
+    <header className="w-full  bg-zinc-950/70 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
 
         {/* LOGO */}
