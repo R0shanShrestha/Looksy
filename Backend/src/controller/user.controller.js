@@ -28,34 +28,49 @@ module.exports.login = async (req, res, next) => {
 
 // Register Controller
 module.exports.signUp = async (req, res, next) => {
-  const isError = validationResult(req);
-  if (!isError.isEmpty()) {
-    return res.status(401).json({ error: isError.array() });
+  try {
+    const isError = validationResult(req);
+
+    if (!isError.isEmpty()) {
+      return res.status(400).json({ error: isError.array() });
+    }
+
+    const { email, username, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({ msg: "Email already exists!" });
+    }
+
+    const hashedPassword = await User.hashPassword(password);
+
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      username,
+    });
+
+    const token = await newUser.jwtToken();
+
+    res.cookie("authToken", `Bearer ${token}`, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+
+    res.status(201).json({
+      authtoken: `Bearer ${token}`,
+      user: {
+        _id: newUser._id,
+        email: newUser.email,
+        username: newUser.username,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Something went wrong" });
   }
-
-  const { email, username, password } = req.body;
-
-  let checkemail = await User.findOne({ email: email });
-
-  if (checkemail) {
-    return res.status(409).json({ msg: "Email already exists!" });
-  }
-
-  let HashPassword = await User.hashPassword(password);
-
-  let createUser = await User.create({
-    email,
-    password: HashPassword,
-    username,
-  });
-
-  if (!createUser) {
-    return res.status(500).json({ msg: "Internal Server Error !" });
-  }
-  const token = await createUser.jwtToken();
-  res.cookie("authToken", `bearer ${token}`);
-
-  res.status(201).json({ authtoken: `bearer ${token}`, user: createUser });
 };
 
 // Profile Controller
@@ -76,7 +91,7 @@ module.exports.userProfile = async (req, res, next) => {
 };
 
 // Update userDetails Controller
-module.exports.userProfile = async (req, res, next) => {
+module.exports.upDateuserProfile = async (req, res, next) => {
   const userId = req.params.userId;
 
   if (req.id != userId) {
@@ -87,7 +102,7 @@ module.exports.userProfile = async (req, res, next) => {
 
   const user = await User.findByIdAndUpdate(
     { _id: userId },
-    { $set: { username: username } }
+    { $set: { username: username } },
   );
 
   if (!user) {
@@ -114,7 +129,7 @@ module.exports.saveImgTOProfile = async (req, res, next) => {
           saveImg: imageUri,
         },
       },
-    }
+    },
   );
 
   if (!user) {

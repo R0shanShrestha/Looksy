@@ -10,8 +10,8 @@ app.use(
     origin: [
       "https://looksy-omega.vercel.app",
       "https://looksy-8tlv.vercel.app",
-      "http://localhost:5173",
-      "http://192.168.1.67:8000",
+      "http://localhost:8000",
+      "http://192.168.1.69:8000",
     ],
     credentials: true,
   }),
@@ -19,6 +19,7 @@ app.use(
 app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Welcome");
