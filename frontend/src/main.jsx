@@ -28,11 +28,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "/explore",
-        element: (
-          <UserAuthWrapper>
-            <ExplorePage />
-          </UserAuthWrapper>
-        ),
+        element: <ExplorePage />,
       },
       {
         path: "/login",
@@ -67,5 +63,5 @@ createRoot(document.getElementById("root")).render(
     <PhotoContext>
       <RouterProvider router={routes} />
     </PhotoContext>
-  </UserContext>
+  </UserContext>,
 );

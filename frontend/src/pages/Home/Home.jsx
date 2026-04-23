@@ -1,130 +1,137 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-
-import { EffectCoverflow, Pagination } from "swiper/modules";
 import { PhotoContextProvider } from "../../context/PhotoContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RecentImageCard from "../../components/RecentImageCard";
 import { UserContextProvider } from "../../context/UserContext";
+import { TRENDING_SEARCHES } from "../../constants/Filters";
+import axios from "axios";
 
 const Home = () => {
   const { setSearch, search, searchImage } = useContext(PhotoContextProvider);
-
   const { logged } = useContext(UserContextProvider);
+  const [trendingSearches, setTrendingSearches] = useState([]);
+  const navigate = useNavigate();
+  // MOST SEARCHED (trend keywords instead of images)
 
-  const [recImg, setRecImg] = useState([]);
+  const getTrendingSearches = async (query) => {
+    if (trendingSearches.some((item) => item.query === query)) return;
+    const result = await axios.get(
+      `https://api.unsplash.com/search/photos?page=1&per_page=20&query=${query}&client_id=${
+        import.meta.env.VITE_ACCESS_KEY
+      }`,
+    );
 
+    setTrendingSearches((prev) => [
+      ...prev,
+      {
+        url: result.data.results[
+          Math.floor(Math.random() * result.data.results.length)
+        ]?.urls?.small,
+        tag: query,
+      },
+    ]);
+  };
   useEffect(() => {
-    const images = [];
-    for (let i = 1; i <= 6; i++) {
-      images.push(`/recentimages/${i}.jpg`);
-
-      setRecImg(images);
-    }
-    setRecImg(images);
+    // serch images with "trending" keyword to get some random trending images for the section
+    TRENDING_SEARCHES.forEach((item) => getTrendingSearches(item));
   }, []);
+  const tags = [
+    "Anime",
+    "Nature",
+    "Cars",
+    "Technology",
+    "Space",
+    "Minimal",
+    "Portrait",
+    "4K Wallpaper",
+    "City Night",
+  ];
 
+  const trendingSearchHandler = (query) => {
+    setSearch(query.toLowerCase());
+    searchImage(query, 1);
+    navigate("/explore");
+  };
   return (
-    <div className="w-full max-w-[1200px]    mx-auto px-4 sm:px-5 md:px-6 lg:px-8 mt-8">
-      {/* HERO */}
-      <div className="flex flex-col items-center text-center gap-6 py-6 sm:py-8">
-        {/* TITLE */}
-        <h1 className="text-2xl font-bold leading-tight sm:text-3xl md:text-5xl max-w-[700px]">
-          <span className="md:hidden">Search. </span>
-          Find. Inspire — with Looksy.
+    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      {/* HERO SECTION */}
+      <div className="flex flex-col items-center text-center gap-6 py-12">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight max-w-[800px]">
+          Discover. Search.{" "}
+          <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+            Explore
+          </span>{" "}
+          Beautiful Images.
         </h1>
 
-        {/* SUBTEXT */}
-        <p className="text-xs sm:text-sm md:text-base text-slate-400 max-w-[500px]">
-          Discover high-quality images instantly, powered by Unsplash.
+        <p className="text-sm sm:text-base text-slate-400 max-w-[550px]">
+          A fast image explorer powered by Unsplash API.
         </p>
 
-        {/* SEARCH BOX */}
-        <div className=" w-full  lg:max-w-[600px] flex flex-col gap-3">
-          <div className="flex flex-col sm:flex-row gap-2 w-full justify-center">
+        {/* SEARCH BAR */}
+        <div className="w-full max-w-[650px] mt-4">
+          <div className="flex items-center bg-white rounded-xl shadow-md overflow-hidden">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              type="text"
-              className="py-3 px-3 outline-none text-sm rounded-md w-[250px] bg-white text-slate-900"
+              className="flex-1 py-4 px-4 outline-none text-sm text-slate-900"
               placeholder="Search images..."
             />
 
             <Link
-              to={"/explore"}
-              onClick={() => searchImage(search, 1)}
-              className="py-3 px-4 text-center rounded-md text-sm bg-blue-500 hover:bg-blue-600 duration-200 w-full sm:w-auto"
+              to="/explore"
+              onClick={() => {
+                searchImage(search, 1);
+                addToTrending(search);
+              }}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 text-sm font-medium transition"
             >
               Search
             </Link>
           </div>
+        </div>
 
-          {/* TAGS */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            {["Robot", "Anime", "Nature"].map((tag) => (
-              <Link
-                key={tag}
-                to={"/explore"}
-                onClick={() => {
-                  if (logged) searchImage(tag, 1);
-                  setSearch(tag.toLowerCase());
-                }}
-                className="bg-slate-800 px-3 py-1 text-xs sm:text-sm rounded hover:shadow-md transition"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
+        {/* TAGS */}
+        <div className="flex flex-wrap justify-center gap-3 mt-6">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              onClick={() => {
+                trendingSearchHandler(tag);
+              }}
+              className="px-4 py-1.5 rounded-full 
+              bg-gradient-to-r from-zinc-800 to-zinc-900
+              border border-zinc-700
+              text-sm text-zinc-200
+              hover:scale-105 hover:border-white
+              transition-all duration-200"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* RECENT SEARCH */}
-      {recImg.length > 0 && (
-        <div className="flex flex-col gap-4 py-6 items-center">
-          <h1 className="font-semibold text-lg sm:text-xl md:text-3xl text-center">
-            Recent Searches
-          </h1>
+      {/* MOST SEARCHED SECTION (*/}
+      <div className="py-10">
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-20 text-center ">
+          🔥 Most Searched Today
+        </h2>
 
-          <div className="w-full">
-            <Swiper
-              loop={true}
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              breakpoints={{
-                0: { slidesPerView: 1.1, spaceBetween: 10 },
-                480: { slidesPerView: 1.5, spaceBetween: 12 },
-                640: { slidesPerView: 2, spaceBetween: 15 },
-                1024: { slidesPerView: 3, spaceBetween: 20 },
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {trendingSearches.map((item, idx) => (
+            <div
+              key={idx}
+              className="hover:scale-[1.02] transition "
+              onClick={() => {
+                trendingSearchHandler(item.tag);
               }}
-              coverflowEffect={{
-                rotate: 20,
-                stretch: 0,
-                depth: 70,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              pagination={{ clickable: true }}
-              modules={[EffectCoverflow, Pagination]}
             >
-              {recImg?.map((data, idx) => (
-                <SwiperSlide
-                  key={idx}
-                  className="flex justify-center items-center py-4"
-                >
-                  <div className="w-full max-w-[260px] sm:max-w-[280px] md:max-w-[300px]">
-                    <RecentImageCard data={data} />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+              <RecentImageCard data={item.url} />
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };

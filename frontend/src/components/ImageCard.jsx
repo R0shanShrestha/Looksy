@@ -1,36 +1,17 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { MdBookmarkAdd, MdBookmarkAdded, MdDownload } from "react-icons/md";
 import { PhotoContextProvider } from "../context/PhotoContext";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
 
-const ImageCard = ({ data }) => {
-  const { favImg, toggleFav, setFullScreen } = useContext(PhotoContextProvider);
+const ImageCard = ({ data, setImageData, setisOpen }) => {
+  const { favImg, toggleFav } = useContext(PhotoContextProvider);
+  const [loaded, setLoaded] = useState(false);
 
-  const [isHover, setHover] = useState(false);
-  const descBoxRef = useRef();
-
-  // animation
-  useGSAP(() => {
-    if (!descBoxRef.current) return;
-
-    gsap.to(descBoxRef.current, {
-      duration: 0.2,
-      y: isHover ? 0 : "100%",
-      ease: "power2.out",
-    });
-  }, [isHover]);
-
-  // check saved
   const isSaved = favImg.some((item) => item.id === data.id);
 
-  const handleFav = () => {
-    toggleFav(data);
-  };
+  const handleDownload = async (e) => {
+    e.stopPropagation(); // prevent fullscreen open
 
-  //  DOWNLOAD FUNCTION
-  const handleDownload = async () => {
     try {
       const res = await fetch(data?.urls?.full);
       const blob = await res.blob();
@@ -45,82 +26,88 @@ const ImageCard = ({ data }) => {
 
       a.remove();
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed", error);
+    } catch (err) {
+      console.log(err);
     }
   };
 
   return (
-    <div className="relative w-full break-inside-avoid overflow-hidden rounded-xl bg-zinc-900 shadow-md">
-      
-      {/* TOP BAR */}
-      <div className="absolute top-0 left-0 w-full z-10 flex items-center justify-between p-2 bg-black/50 backdrop-blur-md text-white">
-        
-        {/* USER */}
-        <div className="flex items-center gap-2 min-w-0">
-          <img
-            src={data?.user?.profile_image?.small || "/avatar.png"}
-            className="w-[28px] h-[28px] rounded-full object-cover"
-          />
-          <span className="text-sm font-medium truncate max-w-[120px]">
-            {data?.user?.name || "Unknown"}
-          </span>
-        </div>
-
-        {/* ACTIONS */}
-        <div className="flex items-center gap-2">
-          
-          {/* DOWNLOAD */}
-          <button
-            onClick={handleDownload}
-            className="hover:scale-110 transition text-xl"
-          >
-            <MdDownload />
-          </button>
-
-          {/* SAVE */}
-          <button
-            onClick={handleFav}
-            className="hover:scale-110 transition text-xl"
-          >
-            {isSaved ? (
-              <MdBookmarkAdded className="text-yellow-300" />
-            ) : (
-              <MdBookmarkAdd className="text-slate-300" />
-            )}
-          </button>
-        </div>
-      </div>
-
+    <div
+      className="relative w-full cursor-pointer break-inside-avoid overflow-hidden rounded-xl bg-zinc-900 group"
+      onClick={() => {
+        setImageData(data);
+        setisOpen(true);
+      }}
+    >
       {/* IMAGE */}
       <img
         src={data?.urls?.regular}
         alt={data?.alt_description || "image"}
         loading="lazy"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onClick={() => setFullScreen(data)}
-        className="w-full h-auto object-cover block"
+        onLoad={() => setLoaded(true)}
+        className={`
+          w-full h-auto object-cover block transition-all duration-500 ease-out
+          ${loaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg"}
+        `}
       />
 
-      {/* BOTTOM INFO */}
-      <div className="absolute bottom-0 left-0 w-full flex items-center justify-between p-2 text-white bg-gradient-to-t from-black/80 to-transparent">
-        <div className="flex items-center gap-1 text-red-400">
-          <FaHeart />
-          <span className="text-xs bg-black/40 px-2 py-0.5 rounded-full">
-            {data?.likes || 0}
+      {/* DARK OVERLAY */}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition" />
+
+      {/* TOP ACTION BAR */}
+      <div className="absolute top-2 left-2 right-2 px-2 flex justify-between items-center opacity-0 group-hover:opacity-100 transition">
+
+        {/* USER */}
+        <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full max-w-[60%]">
+          <img
+            src={data?.user?.profile_image?.small || "/avatar.png"}
+            className="w-6 h-6 rounded-full object-cover"
+          />
+          <span className="text-xs text-white truncate max-w-[90px]">
+            {data?.user?.name || "Unknown"}
           </span>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full shrink-0">
+
+          {/* DOWNLOAD */}
+          <button
+            onClick={handleDownload}
+            className="text-white hover:text-blue-400 transition"
+          >
+            <MdDownload size={18} />
+          </button>
+
+          {/* SAVE */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFav(data);
+            }}
+          >
+            {isSaved ? (
+              <MdBookmarkAdded size={18} className="text-yellow-300" />
+            ) : (
+              <MdBookmarkAdd size={18} className="text-white" />
+            )}
+          </button>
+
         </div>
       </div>
 
-      {/* DESCRIPTION */}
-      <div
-        ref={descBoxRef}
-        className="absolute bottom-0 left-0 w-full bg-white text-black p-2 text-sm translate-y-full"
-      >
-        <p className="line-clamp-3">
-          {data?.alt_description || "No description available"}
+      {/* BOTTOM INFO */}
+      <div className="absolute bottom-0 left-0 w-full p-3 flex justify-between items-center text-white opacity-0 group-hover:opacity-100 transition">
+
+        <div className="flex items-center gap-1 text-red-400">
+          <FaHeart size={12} />
+          <span className="text-xs">{data?.likes || 0}</span>
+        </div>
+
+        <p className="text-[11px] text-slate-200 truncate max-w-[70%] text-right">
+          {data?.alt_description || "Untitled"}
         </p>
+
       </div>
     </div>
   );

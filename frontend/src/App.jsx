@@ -1,28 +1,48 @@
 import "./App.css";
 import Header from "./components/Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
 
 const App = () => {
+  const location = useLocation();
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    setAnimate(false);
+
+    const timer = setTimeout(() => {
+      setAnimate(true);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
   return (
-    <div className="bg min-h-screen flex flex-col text-white">
+    <div className="min-h-screen flex flex-col text-white bg overflow-x-hidden no-scroller">
       {/* HEADER */}
       <Header />
 
-      {/* your routes/layout */}
-
-      <ToastContainer position="top-right" autoClose={2000} />
-
-      {/* MAIN CONTENT */}
-      <main className="flex-1 w-full">
-        <div className="max-w-[1400px] mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8">
+      {/* TOAST */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 2000,
+        }}
+      />
+      {/* MAIN */}
+      <main className="flex-1">
+        <div
+          className={`max-w-[1400px] mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8
+          transition-all duration-300
+          ${animate ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}
+        >
           <Outlet />
         </div>
       </main>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );

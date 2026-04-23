@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GetToken, SetToken } from "../utils/LocalStorageHandler";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 export const UserContextProvider = createContext({
   register: () => {},
   login: () => {},
@@ -36,7 +36,6 @@ const UserContext = ({ children }) => {
       setLogged(true);
       toast.success("Sign up successfully");
     } catch (error) {
-      console.log(error)
       if (error.data != "") {
         // console.log(error);
         if (error?.response?.data?.error ) {
