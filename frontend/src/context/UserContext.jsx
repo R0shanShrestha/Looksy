@@ -2,118 +2,108 @@ import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GetToken, SetToken } from "../utils/LocalStorageHandler";
 import { toast } from "sonner";
+
 export const UserContextProvider = createContext({
   register: () => {},
   login: () => {},
-  user: [],
+  logout: () => {},
+  user: null,
   isLoading: false,
   logged: false,
-  setLogged: () => {},
-  setUser: () => {},
 });
 
 const UserContext = ({ children }) => {
   const BackendUri = import.meta.env.VITE_BACKEND_URI + "/api/v1/user";
+
   const [user, setUser] = useState(null);
-  const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [logged, setLogged] = useState(false);
 
+  // ✅ Restore session on refresh
+  useEffect(() => {
+    const token = GetToken("authToken");
+    const storedUser = GetToken("user");
+
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+      setLogged(true);
+    }
+  }, []);
+
+  // ✅ REGISTER
   const register = async (data) => {
     try {
-      setError(false);
       setLoading(true);
-      const res = await axios.post(`${BackendUri}/signup`, data, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-      const user =  await res.data;
-      setLoading(false);
-      SetToken("authToken", user.authtoken);
-      SetToken("user", JSON.stringify(user.user));
 
+      const res = await axios.post(`${BackendUri}/signup`, data);
+
+      const userData = res.data;
+
+      // store token + user
+      SetToken("authToken", userData.authToken);
+      SetToken("user", JSON.stringify(userData.user));
+
+      setUser(userData.user);
       setLogged(true);
-      toast.success("Sign up successfully");
+
+      toast.success("Signup successful");
     } catch (error) {
-      if (error.data != "") {
-        // console.log(error);
-        if (error?.response?.data?.error ) {
-          error.response.data.error.map((err) => {
-            toast.error(err.msg);
-          });
-        } else {
-          toast.error(error.response.data.msg);
-        }
+      if (error.response?.data?.error) {
+        error.response.data.error.forEach((err) => {
+          toast.error(err.msg);
+        });
       } else {
-        toast.error(
-          error.response.data.msg == undefined
-            ? "Fields Required"
-            : toast.error(error.response.data.msg),
-        );
+        toast.error(error.response?.data?.msg || "Signup failed");
       }
-      setError(true);
+    } finally {
       setLoading(false);
     }
   };
 
-  // login
+  // ✅ LOGIN
   const login = async (data) => {
     try {
-      setError(false);
       setLoading(true);
-      const res = await axios.post(`${BackendUri}/login`, data, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-      const user = res.data;
-      setLoading(false);
-      SetToken("authToken", user.authToken);
-      SetToken("user", JSON.stringify(user.user));
+
+      const res = await axios.post(`${BackendUri}/login`, data);
+
+      const userData = res.data;
+
+      SetToken("authToken", userData.authToken);
+      SetToken("user", JSON.stringify(userData.user));
+
+      setUser(userData.user);
       setLogged(true);
 
-      toast.success("User Logged In");
+      toast.success("Login successful");
     } catch (error) {
-      toast.error(
-        error.response.data.msg == undefined
-          ? "Fields Required"
-          : error.response.data.msg,
-      );
-      setError(true);
+      toast.error(error.response?.data?.msg || "Login failed");
+    } finally {
       setLoading(false);
     }
   };
-  const userProfile = async (data) => {
-    try {
-      setError(false);
-      setLoading(true);
-      const res = await axios.post(`${BackendUri}/login`, data, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-      const user = res.data;
-      setLoading(false);
-      SetToken("authToken", user.authToken);
-      setUser(user.user);
-      setLogged(true);
 
-      toast.error("User Logged In");
-    } catch (error) {
-      toast.error(
-        error.response.data.msg == undefined
-          ? "Fields Required"
-          : error.response.data.msg,
-      );
-      setError(true);
-      setLoading(false);
-    }
+  // ✅ LOGOUT
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+
+    setUser(null);
+    setLogged(false);
+
+    toast.success("Logged out");
   };
 
   return (
     <UserContextProvider.Provider
-      value={{ register, login, user, setUser, isLoading, logged, setLogged }}
+      value={{
+        register,
+        login,
+        logout,
+        user,
+        isLoading,
+        logged,
+      }}
     >
       {children}
     </UserContextProvider.Provider>
