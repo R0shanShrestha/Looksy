@@ -2,19 +2,18 @@ import React, { useContext, useEffect } from "react";
 import { RemoveToken } from "../../utils/LocalStorageHandler";
 import { useNavigate } from "react-router-dom";
 import { UserContextProvider } from "../../context/UserContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const Logout = () => {
   const navto = useNavigate();
   const { setLogged } = useContext(UserContextProvider);
   useEffect(() => {
     RemoveToken("authToken");
-    RemoveToken("user");
     setLogged(false);
     toast.success("Successfully logged out");
     navto("/home");
   }, []);
-  return <div>Logout</div>;
+  return <></>;
 };
 
 export default Logout;

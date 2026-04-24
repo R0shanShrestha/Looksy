@@ -1,12 +1,16 @@
 import { useContext, useEffect } from "react";
 import SavedImage from "./SavedImage";
 import { UserContextProvider } from "../../context/UserContext";
+import { GetToken } from "../../utils/LocalStorageHandler";
 
 const UserProfile = () => {
   const { user, setLogged, userProfile } = useContext(UserContextProvider);
 
   useEffect(() => {
-    userProfile();
+    const token = GetToken("authToken");
+    if (token) {
+      userProfile();
+    }
   }, []);
 
   const profile = {
@@ -25,14 +29,11 @@ const UserProfile = () => {
 
   return (
     <div className="w-full min-h-[calc(100vh-128px)] text-white py-10 px-4">
-
       {/* MAIN WRAPPER */}
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
-
         {/* LEFT PROFILE CARD */}
         <div className="w-full lg:w-[320px] flex-shrink-0">
           <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-center shadow-xl">
-
             {/* AVATAR */}
             <div className="relative w-24 h-24 mx-auto">
               <img
@@ -46,9 +47,7 @@ const UserProfile = () => {
             </div>
 
             {/* NAME */}
-            <h1 className="mt-4 text-xl font-semibold">
-              {profile.username}
-            </h1>
+            <h1 className="mt-4 text-xl font-semibold">{profile.username}</h1>
             <p className="text-xs text-zinc-400">{profile.email}</p>
 
             {/* INFO */}
@@ -71,7 +70,6 @@ const UserProfile = () => {
         <div className="flex-1 min-w-0">
           <SavedImage />
         </div>
-
       </div>
     </div>
   );
