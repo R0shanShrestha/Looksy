@@ -7,12 +7,7 @@ const app = express();
 // Allow only your frontend origin
 app.use(
   cors({
-    origin: [
-      "https://looksy-omega.vercel.app",
-      "https://looksy-8tlv.vercel.app",
-      "http://localhost:8000",
-      "http://192.168.1.69:8000",
-    ],
+    origin: "*",
     credentials: true,
   }),
 );
