@@ -56,7 +56,7 @@ module.exports.signUp = async (req, res, next) => {
     res.cookie("authToken", `Bearer ${token}`, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
 
     res.status(201).json({
@@ -68,7 +68,6 @@ module.exports.signUp = async (req, res, next) => {
       },
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ msg: "Something went wrong" });
   }
 };
