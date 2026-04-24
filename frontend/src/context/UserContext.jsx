@@ -10,8 +10,8 @@ export const UserContextProvider = createContext({
   user: null,
   isLoading: false,
   logged: false,
-  setLogged:() =>{},
-  setUser:() =>{}
+  setLogged: () => {},
+  setUser: () => {},
 });
 
 const UserContext = ({ children }) => {
@@ -37,7 +37,9 @@ const UserContext = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await axios.post(`${BackendUri}/signup`, data);
+      const res = await axios.post(`${BackendUri}/signup`, data, {
+        withCredentials: true,
+      });
 
       const userData = res.data;
 
@@ -104,7 +106,7 @@ const UserContext = ({ children }) => {
         isLoading,
         logged,
         setUser,
-        setLogged
+        setLogged,
       }}
     >
       {children}

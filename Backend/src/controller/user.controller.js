@@ -68,7 +68,9 @@ module.exports.signUp = async (req, res, next) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ msg: "Something went wrong" });
+    console.error("SIGNUP ERROR:", err.message);
+    console.error(err);
+    res.status(500).json({ msg: err.message });
   }
 };
 
