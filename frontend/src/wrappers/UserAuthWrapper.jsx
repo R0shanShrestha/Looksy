@@ -30,8 +30,6 @@ const UserAuthWrapper = ({ children }) => {
     try {
       setUser(JSON.parse(user));
     } catch (err) {
-      console.log("Invalid user data");
-
       setUser(null);
       setStorage({
         total: 0,

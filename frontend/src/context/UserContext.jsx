@@ -10,6 +10,8 @@ export const UserContextProvider = createContext({
   user: null,
   isLoading: false,
   logged: false,
+  setLogged:() =>{},
+  setUser:() =>{}
 });
 
 const UserContext = ({ children }) => {
@@ -19,7 +21,7 @@ const UserContext = ({ children }) => {
   const [isLoading, setLoading] = useState(false);
   const [logged, setLogged] = useState(false);
 
-  // ✅ Restore session on refresh
+  //  Restore session on refresh
   useEffect(() => {
     const token = GetToken("authToken");
     const storedUser = GetToken("user");
@@ -30,7 +32,7 @@ const UserContext = ({ children }) => {
     }
   }, []);
 
-  // ✅ REGISTER
+  //  REGISTER
   const register = async (data) => {
     try {
       setLoading(true);
@@ -74,7 +76,6 @@ const UserContext = ({ children }) => {
 
       setUser(userData.user);
       setLogged(true);
-
       toast.success("Login successful");
     } catch (error) {
       toast.error(error.response?.data?.msg || "Login failed");
@@ -90,7 +91,6 @@ const UserContext = ({ children }) => {
 
     setUser(null);
     setLogged(false);
-
     toast.success("Logged out");
   };
 
@@ -103,6 +103,8 @@ const UserContext = ({ children }) => {
         user,
         isLoading,
         logged,
+        setUser,
+        setLogged
       }}
     >
       {children}

@@ -13,14 +13,12 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // run once only (clean auth load)
   useEffect(() => {
-    const u = GetToken("user");
-
-    if (!u) return;
+    const user = GetToken("user");
+    if (!user) return;
 
     try {
-      const parsed = typeof u === "string" ? JSON.parse(u) : u;
+      const parsed = typeof user === "string" ? JSON.parse(user) : user;
       setUser(parsed);
       setLogged(true);
     } catch {
