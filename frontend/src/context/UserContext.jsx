@@ -41,7 +41,6 @@ const UserContext = ({ children }) => {
         withCredentials: true,
       });
 
-      console.log(res)
       const userData = res.data;
 
 
@@ -54,7 +53,6 @@ const UserContext = ({ children }) => {
 
       toast.success("Signup successful");
     } catch (error) {
-      console.log(error)
       if (error.response?.data?.error) {
         error.response.data.error.forEach((err) => {
           toast.error(err.msg);

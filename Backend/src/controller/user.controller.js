@@ -38,7 +38,6 @@ module.exports.signUp = async (req, res, next) => {
 
     const { email, username, password } = req.body;
 
-    console.log(req.body)
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
