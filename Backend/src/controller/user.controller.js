@@ -28,6 +28,7 @@ module.exports.login = async (req, res, next) => {
 
 // Register Controller
 module.exports.signUp = async (req, res, next) => {
+  
   try {
     const isError = validationResult(req);
 
@@ -37,6 +38,7 @@ module.exports.signUp = async (req, res, next) => {
 
     const { email, username, password } = req.body;
 
+    console.log(req.body)
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
