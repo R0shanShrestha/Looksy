@@ -16,15 +16,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    savedImg: {
-      type: [
-        {
-          saveImg: { type: String },
-        },
-      ],
-    },
+    savedImg: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SaveImage",
+      },
+    ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 UserSchema.methods.jwtToken = function () {

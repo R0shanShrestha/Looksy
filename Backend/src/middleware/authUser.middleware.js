@@ -3,17 +3,18 @@ const User = require("../model/User.model");
 const jwt = require("jsonwebtoken");
 
 module.exports.userAuth = async (req, res, next) => {
-  const token = req.cookies.authToken.split(" ")[1];
+  const getToken = req.cookies?.authToken || req.get("authtoken");
+  const token = getToken.split(" ")[1];
   const userId = req.params.userId;
-  
-  console.log(token);
+
+
   if (!token) {
-    return res.status(401).json({ msg: "Token Not Found" });
+    return res.status(401).json({ msg: "Unauthorized User" });
   }
 
   const verifyToken = jwt.verify(token, JWTKEY);
   if (!verifyToken) {
-    return res.status(401).json({ msg: "Invalid Token" });
+    return res.status(401).json({ msg: "Unauthorized User" });
   }
 
   //   if (verifyToken._id != userId) {
@@ -25,7 +26,7 @@ module.exports.userAuth = async (req, res, next) => {
     return res.status(401).json({ msg: "Unauthorized User" });
   }
 
-  req.id = verifyToken._id
+  req.id = verifyToken._id;
 
   next();
 };

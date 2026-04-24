@@ -1,14 +1,19 @@
 import axios from "axios";
-import React, { createContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
+import { GetToken, SetToken } from "../utils/LocalStorageHandler";
+import { UserContextProvider } from "./UserContext";
 
 export const PhotoContextProvider = createContext(null);
 
 const PhotoContext = ({ children }) => {
+  const { user } = useContext(UserContextProvider);
+
   const [storage, setStorage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [favImg, setFavImg] = useState([]);
+  const [favImg, setFavImg] = useState(user ? user?.savedImg : []);
+
   const [cache, setCache] = useState({});
 
   //  Caching mechanism to avoid redundant API calls
@@ -50,13 +55,39 @@ const PhotoContext = ({ children }) => {
     }
   }
 
-  const toggleFav = (img) => {
-    setFavImg((prev) => {
-      const exists = prev.some((i) => i.id === img.id);
-      return exists ? prev.filter((i) => i.id !== img.id) : [...prev, img];
-    });
+  const toggleFav = async (data) => {
+    const BackendUri = import.meta.env.VITE_BACKEND_URI + "/api/v1/user";
+    const token = GetToken("authToken");
+    if (!token) {
+      toast.error("Login is Requred to save !");
+      return;
+    }
+    const obj = {
+      title: data.alt_description,
+      image: data.urls.regular,
+      description: data.description,
+      imageId: data.id,
+    };
 
-    toast.success("Updated favorites");
+    try {
+      const saveImage = await axios.put(BackendUri + "/toggle-save", obj, {
+        headers: {
+          authtoken: token,
+        },
+        withCredentials: true,
+      });
+
+      const res = await saveImage.data;
+      toast.success(res.msg);
+      setFavImg((prev) => {
+        const exists = prev.some((image) => image.id === data.id);
+        return exists
+          ? prev.filter((image) => image.id !== data.id)
+          : [...prev, data];
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.msg || error.message);
+    }
   };
 
   return (

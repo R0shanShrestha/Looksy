@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const User = require("../model/User.model");
+const imageService = require("../services/Image.services");
 
 // Login Controller
 module.exports.login = async (req, res, next) => {
@@ -10,7 +11,7 @@ module.exports.login = async (req, res, next) => {
 
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: email }).populate("savedImg");
   if (!user) {
     return res.status(401).json({ msg: "Invalid Credientials !" });
   }
@@ -23,12 +24,19 @@ module.exports.login = async (req, res, next) => {
   const token = await user.jwtToken();
   res.cookie("authToken", `bearer ${token}`);
 
-  res.status(200).json({ authToken: `bearer ${token}`, user: user });
+  const newUser = {
+    createdAt: user.createdAt,
+    email: user.email,
+    savedImg: user.savedImg,
+    username: user.username,
+    _id: user._id,
+  };
+
+  res.status(200).json({ authToken: `bearer ${token}`, user: newUser });
 };
 
 // Register Controller
 module.exports.signUp = async (req, res, next) => {
-  
   try {
     const isError = validationResult(req);
 
@@ -77,13 +85,11 @@ module.exports.signUp = async (req, res, next) => {
 
 // Profile Controller
 module.exports.userProfile = async (req, res, next) => {
-  const userId = req.params.userId;
+  const userId = req.id;
 
-  if (req.id != userId) {
-    return res.status(401).json({ msg: "Unauthozied User" });
-  }
-
-  const user = await User.findById({ _id: userId });
+  const user = await User.findById(userId)
+    .populate("savedImg")
+    .select("-password");
 
   if (!user) {
     return res.status(401).json({ msg: "Unauthozied User" });
@@ -114,29 +120,14 @@ module.exports.upDateuserProfile = async (req, res, next) => {
   res.send(user);
 };
 
-// update userSave images fields
+// update userSave images
 
 module.exports.saveImgTOProfile = async (req, res, next) => {
   if (!req.id) {
     return res.status(401).json({ msg: "Unauthozied User" });
   }
-
-  const { imageUri } = req.body;
-
-  const user = await User.findByIdAndUpdate(
-    { _id: req.id },
-    {
-      $push: {
-        savedImg: {
-          saveImg: imageUri,
-        },
-      },
-    },
-  );
-
-  if (!user) {
-    return res.status(401).json({ msg: "Unauthozied User" });
-  }
-
-  res.status(200).json({ msg: "Added to Fav" });
+  const obj = req.body;
+  obj["userId"] = req.id;
+  const saveImage = await imageService.saveimage(req.body);
+  res.status(200).json(saveImage);
 };

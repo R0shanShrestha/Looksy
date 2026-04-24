@@ -12,6 +12,7 @@ export const UserContextProvider = createContext({
   logged: false,
   setLogged: () => {},
   setUser: () => {},
+  userProfile: () => {},
 });
 
 const UserContext = ({ children }) => {
@@ -24,13 +25,15 @@ const UserContext = ({ children }) => {
   //  Restore session on refresh
   useEffect(() => {
     const token = GetToken("authToken");
-    const storedUser = GetToken("user");
 
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (token) {
+      userProfile();
       setLogged(true);
     }
-  }, []);
+    {
+      setLogged(false);
+    }
+  }, [user]);
 
   //  REGISTER
   const register = async (data) => {
@@ -43,11 +46,8 @@ const UserContext = ({ children }) => {
 
       const userData = res.data;
 
-
       // store token + user
       SetToken("authToken", userData.authToken);
-      SetToken("user", JSON.stringify(userData.user));
-
       setUser(userData.user);
       setLogged(true);
 
@@ -75,8 +75,6 @@ const UserContext = ({ children }) => {
       const userData = res.data;
 
       SetToken("authToken", userData.authToken);
-      SetToken("user", JSON.stringify(userData.user));
-
       setUser(userData.user);
       setLogged(true);
       toast.success("Login successful");
@@ -90,19 +88,34 @@ const UserContext = ({ children }) => {
   // ✅ LOGOUT
   const logout = () => {
     localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-
     setUser(null);
     setLogged(false);
     toast.success("Logged out");
   };
 
+  // userprofile
+  const userProfile = async () => {
+    try {
+      const token = GetToken("authToken");
+
+      const updatedUser = await axios.get(BackendUri + "/profile/", {
+        withCredentials: true,
+        headers: {
+          authtoken: token,
+        },
+      });
+      setUser(updatedUser.data);
+    } catch (error) {
+      toast.error(error?.response?.data?.msg || error.message);
+    }
+  };
   return (
     <UserContextProvider.Provider
       value={{
         register,
         login,
         logout,
+        userProfile,
         user,
         isLoading,
         logged,

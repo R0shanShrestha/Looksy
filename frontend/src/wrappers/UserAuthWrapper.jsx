@@ -5,16 +5,14 @@ import { UserContextProvider } from "../context/UserContext";
 import { PhotoContextProvider } from "../context/PhotoContext";
 
 const UserAuthWrapper = ({ children }) => {
-  const { setUser } = useContext(UserContextProvider);
+  const { setUser , userProfile} = useContext(UserContextProvider);
   const { setStorage } = useContext(PhotoContextProvider);
 
   const token = GetToken("authToken");
-  const user = GetToken("user");
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token || !user) {
+    if (!token) {
       // clear state properly
       setUser(null);
       setStorage({
@@ -27,19 +25,10 @@ const UserAuthWrapper = ({ children }) => {
       return;
     }
 
-    try {
-      setUser(JSON.parse(user));
-    } catch (err) {
-      setUser(null);
-      setStorage({
-        total: 0,
-        total_pages: 0,
-        results: [],
-      });
+    userProfile()
 
-      navigate("/login");
-    }
-  }, [token, user, setUser, setStorage, navigate]);
+
+  }, []);
 
   return <>{children}</>;
 };

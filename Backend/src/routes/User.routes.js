@@ -29,7 +29,9 @@ UserRoute.post(
   signupContoller
 );
 
-UserRoute.get("/profile/:userId", userAuth, profileController);
-UserRoute.put("/fav", userAuth, favImage);
+UserRoute.get("/profile/", userAuth, profileController);
+
+// booked & unbooked
+UserRoute.put("/toggle-save", userAuth, favImage);
 
 module.exports = UserRoute;
