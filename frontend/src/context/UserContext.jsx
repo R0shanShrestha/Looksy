@@ -95,9 +95,11 @@ const UserContext = ({ children }) => {
 
   // userprofile
   const userProfile = async () => {
+    const token = GetToken("authToken");
+    if (!token) {
+      return;
+    }
     try {
-      const token = GetToken("authToken");
-
       const updatedUser = await axios.get(BackendUri + "/profile/", {
         withCredentials: true,
         headers: {
