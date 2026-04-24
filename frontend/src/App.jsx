@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 const App = () => {
   const location = useLocation();
@@ -42,7 +43,7 @@ const App = () => {
           <Outlet />
         </div>
       </main>
-
+      <Analytics  />
       <Footer />
     </div>
   );

@@ -2,5 +2,8 @@ const mongoose = require("mongoose");
 const { dbURi } = require("../config/config");
 
 module.exports = dbConnectionState = async () => {
-  return await mongoose.connect(dbURi);
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("DB connected"))
+    .catch((err) => console.error("DB error:", err));
 };
