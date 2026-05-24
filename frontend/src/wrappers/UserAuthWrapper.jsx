@@ -5,7 +5,7 @@ import { UserContextProvider } from "../context/UserContext";
 import { PhotoContextProvider } from "../context/PhotoContext";
 
 const UserAuthWrapper = ({ children }) => {
-  const { setUser, userProfile } = useContext(UserContextProvider);
+  const { setUser } = useContext(UserContextProvider);
   const { setStorage } = useContext(PhotoContextProvider);
 
   const token = GetToken("authToken");
@@ -24,8 +24,6 @@ const UserAuthWrapper = ({ children }) => {
       navigate("/login");
       return;
     }
-
-    userProfile();
   }, []);
 
   return <>{children}</>;

@@ -3,11 +3,27 @@ import Header from "./components/Header";
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Toaster } from "sonner";
+import { GetToken } from "./utils/LocalStorageHandler";
+import { UserContextProvider } from "./context/UserContext";
+import { PhotoContextProvider } from "./context/PhotoContext";
 // import { Analytics } from "@vercel/analytics";
 
 const App = () => {
+  const { userProfile, user, setLogged } = useContext(UserContextProvider);
+  // checking the token state to update user state
+  useEffect(() => {
+    const token = GetToken("authToken");
+    if (token) {
+      userProfile();
+      setLogged(true);
+    } else {
+      setLogged(false);
+    }
+  }, []);
+
+
   const location = useLocation();
   const [animate, setAnimate] = useState(false);
 

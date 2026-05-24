@@ -1,7 +1,8 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GetToken, SetToken } from "../utils/LocalStorageHandler";
 import { toast } from "sonner";
+import { PhotoContextProvider } from "./PhotoContext";
 
 export const UserContextProvider = createContext({
   register: () => {},
@@ -17,29 +18,14 @@ export const UserContextProvider = createContext({
 
 const UserContext = ({ children }) => {
   const BackendUri = import.meta.env.VITE_BACKEND_URI + "/api/v1/user";
-
   const [user, setUser] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [logged, setLogged] = useState(false);
-
-  //  Restore session on refresh
-  useEffect(() => {
-    const token = GetToken("authToken");
-
-    if (token) {
-      userProfile();
-      setLogged(true);
-    }
-    {
-      setLogged(false);
-    }
-  }, [user]);
 
   //  REGISTER
   const register = async (data) => {
     try {
       setLoading(true);
-
       const res = await axios.post(`${BackendUri}/signup`, data, {
         withCredentials: true,
       });

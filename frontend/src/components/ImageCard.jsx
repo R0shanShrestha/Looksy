@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { MdBookmarkAdd, MdBookmarkAdded, MdDownload } from "react-icons/md";
 import { PhotoContextProvider } from "../context/PhotoContext";
@@ -7,7 +7,7 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
   const { favImg, toggleFav } = useContext(PhotoContextProvider);
   const [loaded, setLoaded] = useState(false);
 
-  const isSaved = favImg.some((item) => item.id === data.id);
+  // const isSaved = ;
 
   const handleDownload = async (e) => {
     e.stopPropagation(); // prevent fullscreen open
@@ -47,7 +47,11 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
         onLoad={() => setLoaded(true)}
         className={`
           w-full h-auto object-cover block transition-all duration-500 ease-out
-          ${loaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-105 blur-lg"}
+          ${
+            loaded
+              ? "opacity-100 scale-100 blur-0"
+              : "opacity-0 scale-105 blur-lg"
+          }
         `}
       />
 
@@ -56,7 +60,6 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
 
       {/* TOP ACTION BAR */}
       <div className="absolute top-2 left-2 right-2 px-2 flex justify-between items-center opacity-0 group-hover:opacity-100 transition">
-
         {/* USER */}
         <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full max-w-[60%]">
           <img
@@ -70,7 +73,6 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full shrink-0">
-
           {/* DOWNLOAD */}
           <button
             onClick={handleDownload}
@@ -86,19 +88,17 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
               toggleFav(data);
             }}
           >
-            {isSaved ? (
+            {favImg.some((item) => item.imageId === data.id) ? (
               <MdBookmarkAdded size={18} className="text-yellow-300" />
             ) : (
               <MdBookmarkAdd size={18} className="text-white" />
             )}
           </button>
-
         </div>
       </div>
 
       {/* BOTTOM INFO */}
       <div className="absolute bottom-0 left-0 w-full p-3 flex justify-between items-center text-white opacity-0 group-hover:opacity-100 transition">
-
         <div className="flex items-center gap-1 text-red-400">
           <FaHeart size={12} />
           <span className="text-xs">{data?.likes || 0}</span>
@@ -107,7 +107,6 @@ const ImageCard = ({ data, setImageData, setisOpen }) => {
         <p className="text-[11px] text-slate-200 truncate max-w-[70%] text-right">
           {data?.alt_description || "Untitled"}
         </p>
-
       </div>
     </div>
   );

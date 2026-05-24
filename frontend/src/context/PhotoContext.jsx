@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { GetToken, SetToken } from "../utils/LocalStorageHandler";
 import { UserContextProvider } from "./UserContext";
 
-export const PhotoContextProvider = createContext(null);
+export const PhotoContextProvider = createContext({
+  setFavImg: () => {},
+});
 
 const PhotoContext = ({ children }) => {
   const { user } = useContext(UserContextProvider);
@@ -12,7 +14,12 @@ const PhotoContext = ({ children }) => {
   const [storage, setStorage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
+
   const [favImg, setFavImg] = useState(user ? user?.savedImg : []);
+
+  useEffect(() => {
+    setFavImg(user ? user?.savedImg : [])
+  }, [favImg]);
 
   const [cache, setCache] = useState({});
 
