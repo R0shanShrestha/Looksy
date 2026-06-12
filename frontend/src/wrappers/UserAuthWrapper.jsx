@@ -12,6 +12,7 @@ const UserAuthWrapper = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    print('hi')
     if (!token) {
       // clear state properly
       setUser(null);
@@ -24,7 +25,7 @@ const UserAuthWrapper = ({ children }) => {
       navigate("/login");
       return;
     }
-  }, []);
+  }, [token]);
 
   return <>{children}</>;
 };

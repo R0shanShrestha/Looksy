@@ -17,10 +17,6 @@ const PhotoContext = ({ children }) => {
 
   const [favImg, setFavImg] = useState(user ? user?.savedImg : []);
 
-  useEffect(() => {
-    setFavImg(user ? user?.savedImg : [])
-  }, [favImg]);
-
   const [cache, setCache] = useState({});
 
   //  Caching mechanism to avoid redundant API calls
